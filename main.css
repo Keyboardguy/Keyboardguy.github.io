@@ -1,3 +1,64 @@
 html {
   font-family: helvetica, sans-serif;
+  box-sizing: border-box;
+  background: url("images/orange.jpg") repeat;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+header {
+	text-align: center;
+}
+
+main {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	margin: auto;
+	max-width: 800px;
+	grid-gap: 20px;
+	gap: 20px;
+}
+
+div {
+	margin: auto;
+	text-align: center;
+}
+
+
+div a {
+	display: block;
+}
+
+
+
+div a {
+	display: block;
+	border-radius: 50%;
+}
+
+div img {
+	border-radius: 50%;
+	border: 1px solid black;
+	width: 100%;
+}
+
+
+@media screen and (hover: hover) {
+	main {
+		grid-gap: 0;
+		gap: 0;
+	}
+	
+	div a {
+		opacity: 0.5;
+		transform: scale(0.8);
+		transition: 1s all;
+	}
+	
+	div a:hover {
+		opacity: 1;
+		transform: scale(1);
+	}
 }
