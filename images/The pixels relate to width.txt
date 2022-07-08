@@ -1,0 +1,1 @@
+The height and width must be ~the same or else it will look strange.
