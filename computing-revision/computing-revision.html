@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Revision Website</title>
+		<meta name="author" content="George">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<main>
+		    <h1> Computing<br>science</h1>
+			<aside>
+				<ul>
+					<li><a href="#unit1">Software Design and Development</a></li>
+					<li><a href="#unit2">Databases</a></li>
+					<li><a href="#unit3">Computer Theory</a></li>
+				</ul>
+			</aside>
+			<article id="unit1">
+				<h2> Unit 1 - Software Design and Development </h2>
+				<h3> Process of making software </h3>
+				<p>There are seven stages to making software.</p>
+				<ol>
+					<li>Analysis</li>
+					<li>Design</li>
+					<li>Implementation</li>
+					<li>Testing</li>
+					<li>Documentation</li>
+					<li>Evaluation</li>
+					<li>Maintenance</li>
+				</ol>
+				<p>You can use the mnemonic 'A Dance In The Dark Every Monday' to remember this.</p>
+				
+				<h3>Design stage</h3>
+				<p>There are 3 design methods in nat 5.</p>
+				<ul>
+					<li>Structure Charts</li>
+					<li>Pseudocode</li>
+					<li>Flow chart</li>
+				</ul>
+				<p>However, there is also another that is <span class="danger">only used for screen layouts, not code</span>.</p>
+				<p>Wireframes are used as a design technique for screen layouts. They help show the User Interface (UI).</p>
+				<p>i cannot be bothered right now to add the symbols and stuff</p>
+				<h3>Predefined functions</h3>
+				<p>The three pre-defined functions for N5 are <code>random</code>, <code>round</code>, and <code>length</code>.</p>
+				
+				<p>Parameters are arguments inside the brackets of functions.<br>e.g. <code>round(2.53, 2)</code> - the parameters are <code>2.53</code> and <code>2</code>.</p>
+				<h3>Assignment and arithmetic operations</h3>
+				<p>Assignment is giving a variable a value.<br>e.g. <code><var>age</var> = 7</code></p>
+				
+				<p>There are 5 different arithmetic operations for N5.</p>
+				<ul>
+					<li>Subtraction - <code>-</code></li>
+					<li>Addition - <code>+</code><br><span class="note">Note - this is the same operator for concatenation in python.</span></li>
+					<li>Multiplication - <code>*</code></li>
+					<li>Divison - <code>/</code></li>
+					<li>Exponentiation - <code>^</code><br><span class="note">Note - In python exponentiation is <code>**</code>.</span></li>
+				</ul>
+				
+				<h3>Concatenation</h3>
+				<p>Concatenation is joining text strings together to make a new text string.</p>
+				<p>An example in python: <br><code class="codeWithOutput">print("Hello " + "World!")</code><br><samp>Hello World!</samp></p>
+				
+				<h3>Loops</h3>
+				<p> There are two loops. </p>
+				<dl>
+					<dt>Fixed loop</dt>
+					<dd>A loop that repeats a sequence of code a set number of times. <br><span class="danger">Never</span> call this a for loop.</dd>
+					<dt>Conditional loop</dt>
+					<dd>A loop that repeats code until a condition is met. <br><span class="danger">Never</span> call this a while loop.</dd>
+				</dl>
+				
+				<h3>Examples of standard algorithms in Python</h3>
+				<dl>
+					<dt>Input validation</dt>
+					<dd><pre><code><var>mark</var> = int(input("Enter mark"))
+while <var>mark</var> &lt; 0 or <var>mark</var> &gt; 10:
+	print("mark must be between 0 and 10")
+	<var>mark</var> = int(input("re-entermark"))
+#end while</code></pre></dd>
+					<dt>Running total</dt>
+					<dd><pre><code>for <var>counter</var> in range(0,3):
+	<var>mark</var> = int(input("Enter mark"))
+	<var>total</var> = <var>total</var> + <var>mark</var>
+#end for</code></pre></dd>
+					<dt>Traversing a 1-D array</dt>
+					<dd><pre><code><var>ages</var> = [8,10,12]
+for <var>counter</var> in range(0,3):
+	print(<var>ages</var>[<var>counter</var>])
+#end for</code></pre></dd>
+				</dl>
+				<h3>Types of errors</h3>
+				<p>There are 3 types of errors.</p>
+				<dl>
+					<dt>Syntax</dt>
+					<dd>An error in the spelling or grammar used when coding. The program will not execute. <br> e.g. <code>print("hi</code></dd>
+					<dt>Logic</dt>
+					<dd>An error in the logic of the code. The program will execute, but will give unexpected results.<br> e.g. <code>areaOfCircle = 3.14 * radius</code></dd>
+					<dt>Runtime
+					<dd>An error that only becomes evident in runtime.<br>e.g. <code>sum = number / 0</code></dd>
+				</dl>
+				
+				<h3>Types of variable</h3>
+				<p>There are 5 types of variable. (although i dont know if you need to know their definitions)</p>
+				<dl>
+					<dt>Integer</dt>
+					<dd>A whole number. Can be negative or positive, including 0.</dd>
+					<dt>Real (float)</dt>
+					<dd>A number with a fractional part. e.g. <code>3.5</code><br><span class="note">Note - Call them real numbers in the exam, not floats.</span></dd>
+					<dt>String</dt>
+					<dd>Any text. Even <code>""</code> would count as a string.</dd>
+					<dt>Char</dt>
+					<dd>Stores one character.</dd>
+					<dt>Boolean</dt>
+					<dd>Something that has two possible values, true or false.</dd>
+				</dl>
+				
+				<h3>Arrays</h3>
+				<p>An array is a single variable with a series of values. It is a <strong>data structure</strong>.</p>
+				
+				<h3>Operators</h3>
+					<ul>
+						<li><code>&gt;</code> - greater than</li>
+						<li><code>&lt;</code> - less than</li>
+						<li><code>&gt;=</code> - greater than or equal</li>
+						<li><code>&lt;=</code> - less than or equal</li>
+						<li><code>!=</code> - not equal</li>
+						<li><code>==</code> - equal</li>
+					</ul>
+					
+					<p>Note - the SQA displays these as &gt;, &lt;, ≥, ≤, ≠, = in the course specifications.</p>
+				<h3>Logical operators</h3>
+				<p>These are used to include two or more parts of a condition, or the opposite of a condition.</p>
+				<dl>
+					<dt>AND</dt>
+					<dd>Evaluates as true when all parts of the condition are true.<br>e.g. <code>if points &gt; 16 and average &gt; 5</code></dd>
+					<dt>OR</dt>
+					<dd>Evaluates as true if one of the conditions is true.<br>e.g. <code>if age &gt; 18 or money &lt; 200</code></dd>
+					<dt>NOT</dt>
+					<dd>Returns the opposite of the condition.<br>e.g. <code>IF NOT (score = 0)</code><br><span class="note">Note - this is psuedocode unlike the others, which were in python.</span></dd>
+				</dl>
+				<h3>Program Readability</h3>
+				<p>There are 3 parts to program readability.</p>
+				<ul>
+					<li>Comments</li>
+					<li>Blank lines</li>
+					<li>Sensible variable names</li>
+				</ul>
+				
+				<h3>Test data</h3>
+				<p>For example, if <code>age</code> has to be between 18 and 30.</p>
+				<dl>
+					<dt>Normal test data</dt>
+					<dd>Test data that is expected and should be accepted.<br>e.g. <code>age</code> is 23.</dd>
+					<dt>Extreme test data</dt>
+					<dd>Test data that falls at the boundary of any possible ranges.<br>e.g. <code>age</code> is 30.</dd>
+					<dt>Exceptional test data</dt>
+					<dd>Test data that the progrem should not accept.<br>e.g. <code>age</code> is 96.</dd>
+				</dl>
+				
+				<h3>Fitness for purpose & Robustness</h3>
+				<p>Software is deemed <strong>fit for purpose</strong> if it meets the requiremnets determined at the analysis phase.</p>
+				
+				<p>Software is deemed <strong>robust</strong> if it can cope with unexpected or incorrect input.</p>
+			</article>
+			<article id="unit2">
+				<h2> Unit 2 - Databases </h2>
+				<p>Not going to cover web design here.</p>
+			</article>
+			<article id="unit3">
+				<h2> Unit 3 - Computer theory or something i forgot </h2>
+			</article>
+		</main>
+	</body>
+</html>
