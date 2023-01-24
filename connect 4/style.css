@@ -1,0 +1,13 @@
+html {
+  box-sizing: border-box;
+  font-family: helvetica, sans-serif;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+p {
+	font-size: 3em;
+}
+
