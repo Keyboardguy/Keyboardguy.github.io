@@ -1,0 +1,48 @@
+html {
+  box-sizing: border-box;
+  font-family: helvetica, sans-serif;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+canvas {
+	border: 1px solid black;
+}
+
+form {
+	display: block;
+}
+
+.force-section {
+	display: flex;
+	margin-bottom: 10px;
+	min-height: 250px;
+}
+
+input {
+  appearance: none;
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+  box-sizing: border-box;
+  padding: 5px;
+  border: 1px solid black;
+}
+
+input:invalid {
+	border: 1px solid red;
+}
+
+input[type="checkbox"] {
+	appearance: auto;
+}
+
+
+button[type="submit"] {
+	padding: 3px;
+	width: 100px;
+	height: 30px;
+}
+

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	    <title>map</title>
+		<link rel="stylesheet" href="style.css">
+		<script src="main.js" defer></script>
+	</head>
+	<body>
+		<h1>Beam diagram maker</h1>
+		<canvas id="diagram" width="1200" height="600">
+			<p> There is supposed to be a diagram here, but it doesn't work on your device for some reason. </p>
+			<p> I don't take engineering, so you might have to ask me to fix it otherwide I wont notice. </p>
+		</canvas>
+		
+		<form>
+			<p class="diagram-settings">
+				<label for="show-forces">Show forces: </label>
+				<input type="checkbox" id="show-forces" name="show-forces" step="any" value="true" checked />
+				<label for="show-reactions">Show reactions: </label>
+				<input type="checkbox" id="show-reactions" name="show-reactions" step="any" value="true" checked />
+			</p>
+			<p> 
+				<label for="beam-length">Beam length:</label>
+				<input type="number" id="beam-length" name="beam-length" step="any" required />
+			</p>
+
+			<p> 
+				<label for="hinge-position">Hinge support position:</label>
+				<input type="number" id="hinge-position" name="hinge-position" step="any" required />
+			</p>
+			
+			<p> 
+				<label for="roller-position">Roller support position:</label>
+				<input type="number" id="roller-position" name="roller-position" step="any" required />
+			</p>
+			
+			<section class="force-section">
+				<fieldset class="simple">
+					<legend> Simple loads </legend>
+					<div>
+						<p>
+							<label for="simple-force">Force (kN):</label>
+							<input type="number" id="simple-force" name="force" step="any" />
+						</p>
+				
+						<p>
+							<label for="simple-position">Position (m):</label>
+							<input type="number" id="simple-position" name="position" step="any" />
+						</p>
+					</div>
+					<button type="button" id="add-simple-force"> Add another force</button>
+				</fieldset>
+			
+				<fieldset class="oriented">
+					<legend> Oriented loads </legend>
+					<div>
+						<p>
+							<label for="oriented-force">Force (kN):</label>
+							<input type="number" id="oriented-force" name="force" step="any" />
+						</p>
+				
+						<p>
+							<label for="oriented-position">Position (m):</label>
+							<input type="number" id="oriented-position" name="position" step="any" />
+						</p>
+				
+						<p>
+							<label for="oriented-angle">Angle measured from clockwise vertical (°):</label>
+							<input type="number" id="oriented-angle" name="angle" min="-360" max="360" step="any" />
+						</p>
+					</div>
+					<button type="button" id="add-oriented-force"> Add another force</button>
+				</fieldset>
+			
+				<fieldset class="uniform">
+					<legend> Uniformly distributed loads </legend>
+					<div>
+						<p>
+							<label for="uniform-force">kN per metre (kN):</label>
+							<input type="number" id="uniform-force" name="force" step="any" />
+						</p>
+				
+						<p>
+							<label for="uniform-starting-position">Starting position (m):</label>
+							<input type="number" id="uniform-starting-position" name="starting-position" step="any" />
+						</p>
+
+						<p>
+							<label for="uniform-ending-position">Ending position (m):</label>
+							<input type="number" id="uniform-ending-position" name="ending-position" step="any" />
+						</p>
+					</div>
+					<button type="button" id="add-uniform-force"> Add another force</button>
+				</fieldset>
+			</section>
+			<button type="submit">Calculate</button>
+		</form>
+		<p> Notes to ask: given </p>
+		<ul>
+			<li>beam-length 5</li>
+			<li>support pos 0</li>
+			<li>roller pos 4</li>
+			<li>oriented force 10kN</li>
+			<li>oriented force 5m</li>
+			<li>oriented force 225deg</li>
+		</ul>
+		<p> The excel spreadsheet and my answers differ.</p>
+	</body>
+</html>
