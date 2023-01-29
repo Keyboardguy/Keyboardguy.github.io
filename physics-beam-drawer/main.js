@@ -346,7 +346,7 @@ function draw_diagram(data) {
 				draw_arrow(force_x, canvas_data.beam_y - arrow_length, 
 						   force_x, canvas_data.beam_y);
 			}
-			ctx.fillText(`${force.force.toFixed(2)}kN`,
+			ctx.fillText(`${Math.abs(force.force.toFixed(2))}kN`,
 					     force_x + 5, canvas_data.beam_y - arrow_length - 5);
 		}
 		
@@ -371,7 +371,7 @@ function draw_diagram(data) {
 									 force.positive_angle,
 									 arrow_length);
 									 
-			ctx.fillText(`${force.force.toFixed(2)}kN`,
+			ctx.fillText(`${Math.abs(force.force.toFixed(2))}kN`,
 					     xy2[0] + 5, xy2[1] - 5);
 		}
 		
