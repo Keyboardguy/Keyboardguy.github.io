@@ -153,8 +153,8 @@ function calculate_roller_reaction(data) {
 function calculate_hinge_reaction(data) {
 	//left force is negative, right force is positive.
 	// up force is negative, down force is positive.
-	hinge_horizontal_force = 0;
-	hinge_vertical_force = 0;
+	let hinge_horizontal_force = 0;
+	let hinge_vertical_force = 0;
 	
 	for (const force of data.forces) {
 		if (force.type === "oriented") {
