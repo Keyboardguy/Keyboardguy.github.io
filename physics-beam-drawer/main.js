@@ -591,9 +591,9 @@ function make_force_adder() {
 		fieldset.insertBefore(hr, button);
 		
 		if (force_type === "uniform") {
+			div.appendChild(make_property_para("force", "kN per metre (kN/m): "));
 			div.appendChild(make_property_para("starting-position", "Starting position (m): "));
 			div.appendChild(make_property_para("ending-position", "Ending position (m): "));
-			div.appendChild(make_property_para("force", "kN per metre (kN/m): "));
 			fieldset.insertBefore(div, button);
 			return "finished";
 		} 
