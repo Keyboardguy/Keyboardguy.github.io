@@ -396,9 +396,8 @@ function draw_diagram(data) {
 				
 			
 			function draw_uniform_line() {
-				const centre_of_force = real_position_to_canvas_x(
-											Math.abs(force.ending_position
-													 - force.starting_position) / 2);
+				const centre_of_force = real_position_to_canvas_x(Math.abs(force.ending_position
+											   + force.starting_position) / 2);
 				
 				const xy2 = rotate_points_by_angle(centre_of_force, canvas_data.beam_y, 315, arrow_length / 4);
 				
