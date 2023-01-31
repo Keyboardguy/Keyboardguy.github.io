@@ -146,7 +146,7 @@ function calculate_roller_reaction(data) {
 	for (const force of data.forces) {
 		CWM += force.moment(data.hinge_position);
 	}
-	data.roller_reaction_force = Math.abs(CWM / (data.roller_position - data.hinge_position));
+	data.roller_reaction_force = -(CWM / (data.roller_position - data.hinge_position));
 	return "ok";
 }
 
@@ -167,7 +167,7 @@ function calculate_hinge_reaction(data) {
 		}
 	}
 	
-	hinge_vertical_force -= data.roller_reaction_force;
+	hinge_vertical_force += data.roller_reaction_force;
 	hinge_horizontal_force = hinge_horizontal_force * -1;
 	data.hinge_reaction_force = Math.sqrt(square(hinge_vertical_force)
 							              + square(hinge_horizontal_force));
@@ -207,6 +207,12 @@ function draw_diagram(data) {
 		ctx.moveTo(tox, toy);
 		ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
 		ctx.stroke();
+	}
+	
+	function draw_force_arrow(x1, y1, x2, y2, force) {
+		return force < 0
+			   ? draw_arrow(x1, y1, x2, y2)
+			   : draw_arrow(x2, y2, x1, y1);
 	}
 	
 	function draw_circle(x, y, radius) {
@@ -268,16 +274,16 @@ function draw_diagram(data) {
 			return undefined;
 		}
 		
-		draw_arrow(support_x,
-				   canvas_data.beam_y,
-				   support_x,
-				   canvas_data.beam_y - arrow_length);
+		//Note -  I do not know what to draw if the reaction force is downwards. This is a temporary fix.
+		draw_force_arrow(support_x, canvas_data.beam_y,
+						 support_x, canvas_data.beam_y - arrow_length,
+						 data.roller_reaction_force);
 		
 		if (isNaN(data.roller_reaction_force)) {
 			ctx.fillText(`RB = ? kN`,
 						  support_x + 5, canvas_data.beam_y - arrow_length - 5);
 		} else {
-			ctx.fillText(`RB = ${data.roller_reaction_force.toFixed(2)}kN`,
+			ctx.fillText(`RB = ${Math.abs(data.roller_reaction_force.toFixed(2))}kN`,
 						  support_x + 5, canvas_data.beam_y - arrow_length - 5);
 		}
 		ctx.restore();
@@ -305,7 +311,6 @@ function draw_diagram(data) {
 			ctx.restore();
 		}
 		
-		//NEED TO FIX - ACCOUNT FOR DIFFERENT ANGLES FROM 0-360.
 		function draw_hinge_arrow(x1, y1) {
 			ctx.save();
 			const xy2 = rotate_points_by_angle(x1, y1, data.hinge_angle, arrow_length);
@@ -337,15 +342,11 @@ function draw_diagram(data) {
 	function draw_forces(arrow_length) {
 		function draw_simple_force(force) {
 			const force_x = real_position_to_canvas_x(force.position);
-			if (force.force === 0) {
-				return 0;
-			} else if (force.force < 0) {
-				draw_arrow(force_x, canvas_data.beam_y, 
-						   force_x, canvas_data.beam_y - arrow_length);
-			} else {
-				draw_arrow(force_x, canvas_data.beam_y - arrow_length, 
-						   force_x, canvas_data.beam_y);
-			}
+			
+			draw_force_arrow(force_x, canvas_data.beam_y,
+							 force_x, canvas_data.beam_y - arrow_length,
+							 force.force);
+							 
 			ctx.fillText(`${Math.abs(force.force.toFixed(2))}kN`,
 					     force_x + 5, canvas_data.beam_y - arrow_length - 5);
 		}
@@ -356,15 +357,8 @@ function draw_diagram(data) {
 											   canvas_data.beam_y,
 											   force.positive_angle,
 											   arrow_length);
-			if (force.force === 0) {
-				return 0;
-			} else if (force.force < 0) {
-				draw_arrow(force_x, canvas_data.beam_y, 
-						   xy2[0], xy2[1]);
-			} else {
-				draw_arrow(xy2[0], xy2[1], 
-						   force_x, canvas_data.beam_y);
-			}
+											   
+			draw_force_arrow(force_x, canvas_data.beam_y, xy2[0], xy2[1], force.force);
 			
 			draw_angle_from_vertical(force_x,
 									 canvas_data.beam_y,
