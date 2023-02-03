@@ -39,7 +39,7 @@ button[type="submit"] {
 	padding: 3px;
 	width: 150px;
 	height: 50px;
-	font-size: 1.5em;
+	font-size: 1em;
 }
 
 input[type='reset'] {

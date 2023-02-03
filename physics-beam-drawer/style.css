@@ -35,13 +35,9 @@ input:invalid {
 	border: 1px solid red;
 }
 
-button[type="submit"] {
+button[type="submit"], input[type='reset'] {
 	padding: 3px;
 	width: 150px;
 	height: 50px;
 	font-size: 1em;
-}
-
-input[type='reset'] {
-	margin-bottom: 10px;
 }
