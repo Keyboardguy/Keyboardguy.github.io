@@ -21,6 +21,15 @@
 				<label for="show-reactions">Show reactions: </label>
 				<input type="checkbox" id="show-reactions" name="show-reactions" value="true" checked />
 			</p>
+			<p class="diagram-settings">
+				<label for="N">Forces in N: </label>
+				<input type="radio" id="N" name="force-units" value="" />
+				<label for="kN">Forces in kN: </label>
+				<input type="radio" id="kN" name="force-units" value="k" checked />
+			</p>
+		</form>
+		
+		<form>
 			<p> 
 				<label for="beam-length">Beam length (m):</label>
 				<input type="number" id="beam-length" name="beam-length" step="any" required />
@@ -50,7 +59,7 @@
 							<input type="number" id="simple-position" name="position" step="any" />
 						</p>
 					</div>
-					<button type="button" id="add-simple-force"> Add another force</button>
+					<button type="button" id="add-simple-force" class="add-force"> Add another force</button>
 				</fieldset>
 			
 				<fieldset class="oriented">
@@ -71,7 +80,7 @@
 							<input type="number" id="oriented-angle" name="angle" min="-360" max="360" step="any" />
 						</p>
 					</div>
-					<button type="button" id="add-oriented-force"> Add another force</button>
+					<button type="button" id="add-oriented-force" class="add-force"> Add another force</button>
 				</fieldset>
 			
 				<fieldset class="uniform">
@@ -92,10 +101,11 @@
 							<input type="number" id="uniform-ending-position" name="ending-position" step="any" />
 						</p>
 					</div>
-					<button type="button" id="add-uniform-force"> Add another force</button>
+					<button type="button" id="add-uniform-force" class="add-force"> Add another force</button>
 				</fieldset>
 			</section>
-			<button type="submit">Calculate</button>
+			<input type="reset" value="Reset Data"> <br>
+			<button type="submit">Calculate</button> 
 		</form>
 	</body>
 </html>
