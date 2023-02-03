@@ -1,4 +1,5 @@
-// coding is hard
+"use strict";
+//coding is hard
 
 class SimpleForce {
 	constructor(force, position) {
@@ -54,8 +55,8 @@ class UniformForce {
 	constructor(newtons_per_metre, starting_position, ending_position) {
 		this.type = "uniform";
 		this.newtons_per_metre = newtons_per_metre;
-		this.starting_position = starting_position;
-		this.ending_position = ending_position;
+		this.starting_position = ending_position > starting_position ? starting_position : ending_position;
+		this.ending_position = ending_position > starting_position ? ending_position : starting_position;
 		
 		this.width = Math.abs(this.ending_position - this.starting_position);
 		this.force = this.width * this.newtons_per_metre;
@@ -262,30 +263,50 @@ function draw_diagram(data) {
 
 	
 	function draw_support_all(arrow_length, draw_force) {
-		const support_x = real_position_to_canvas_x(data.roller_position);
+		// <= 0 instead of < 0 just cause it looks nicer.
+		function draw_support() {
+			return data.roller_reaction_force <= 0
+				   ? draw_circle(support_x, canvas_data.beam_y + 10, 10)
+				   : draw_circle(support_x, canvas_data.beam_y - 10, 10);
+		}
 		
-		ctx.save();
-		draw_circle(support_x, canvas_data.beam_y + 10, 10);
-		ctx.fillStyle = "#FF0000";
-		ctx.strokeStyle = "#FF0000";
-
+		function draw_support_arrow() {
+			return data.roller_reaction_force <= 0
+				   ? draw_arrow(support_x, canvas_data.beam_y,
+						        support_x, canvas_data.beam_y - arrow_length)
+				   
+				   : draw_arrow(support_x, canvas_data.beam_y,
+							    support_x, canvas_data.beam_y + arrow_length);
+		}
+		
+		function draw_support_text() {
+			const reaction_text = isNaN(data.roller_reaction_force)
+								  ? "RB = ? kN"
+						          : `RB = ${Math.abs(data.roller_reaction_force.toFixed(2))}${force_unit}N`;
+			
+			return data.roller_reaction_force <= 0
+				   ? ctx.fillText(reaction_text, 
+							      support_x + 5,
+								  canvas_data.beam_y - arrow_length - 5)  
+				   : ctx.fillText(reaction_text, 
+							      support_x + 5,
+								  canvas_data.beam_y + arrow_length - 5);
+		}
+		
+		const support_x = real_position_to_canvas_x(data.roller_position);
+		draw_support();
+	
 		if (!draw_force) {
-			ctx.restore();
 			return undefined;
 		}
 		
-		//Note -  I do not know what to draw if the reaction force is downwards. This is a temporary fix.
-		draw_force_arrow(support_x, canvas_data.beam_y,
-						 support_x, canvas_data.beam_y - arrow_length,
-						 data.roller_reaction_force);
+		ctx.save();
+		ctx.fillStyle = "#FF0000";
+		ctx.strokeStyle = "#FF0000";
 		
-		if (isNaN(data.roller_reaction_force)) {
-			ctx.fillText(`RB = ? kN`,
-						  support_x + 5, canvas_data.beam_y - arrow_length - 5);
-		} else {
-			ctx.fillText(`RB = ${Math.abs(data.roller_reaction_force.toFixed(2))}kN`,
-						  support_x + 5, canvas_data.beam_y - arrow_length - 5);
-		}
+		draw_support_arrow();
+		draw_support_text();
+		
 		ctx.restore();
 	}
 	
@@ -322,7 +343,7 @@ function draw_diagram(data) {
 				ctx.fillText(`RA = ? kN`,
 							  xy2[0] + 5, xy2[1] - 5);
 			} else {
-				ctx.fillText(`RA = ${data.hinge_reaction_force.toFixed(2)}kN`,
+				ctx.fillText(`RA = ${data.hinge_reaction_force.toFixed(2)}${force_unit}N`,
 							  xy2[0] + 5, xy2[1] - 5);
 			}
 			ctx.restore();
@@ -334,7 +355,10 @@ function draw_diagram(data) {
 		draw_hinge_part(hinge_x, canvas_data.beam_y, 13.3333);
 		if (draw_force) {
 			draw_hinge_arrow(hinge_x, canvas_data.beam_y);
-			draw_angle_from_vertical(hinge_x, canvas_data.beam_y, data.hinge_angle, arrow_length);
+			draw_angle_from_vertical(hinge_x,
+							         canvas_data.beam_y,
+									 data.hinge_angle === 360 ? 0 : data.hinge_angle,
+									 arrow_length);
 		}
 		ctx.restore();
 	}
@@ -347,7 +371,7 @@ function draw_diagram(data) {
 							 force_x, canvas_data.beam_y - arrow_length,
 							 force.force);
 							 
-			ctx.fillText(`${Math.abs(force.force.toFixed(2))}kN`,
+			ctx.fillText(`${Math.abs(force.force.toFixed(2))}${force_unit}N`,
 					     force_x + 5, canvas_data.beam_y - arrow_length - 5);
 		}
 		
@@ -365,7 +389,7 @@ function draw_diagram(data) {
 									 force.positive_angle,
 									 arrow_length);
 									 
-			ctx.fillText(`${Math.abs(force.force.toFixed(2))}kN`,
+			ctx.fillText(`${Math.abs(force.force.toFixed(2))}${force_unit}N`,
 					     xy2[0] + 5, xy2[1] - 5);
 		}
 		
@@ -400,7 +424,7 @@ function draw_diagram(data) {
 				ctx.lineTo(xy2[0], xy2[1]);
 				ctx.lineTo(xy2[0] - arrow_length, xy2[1]);
 				ctx.stroke();
-				ctx.fillText(`${force.newtons_per_metre.toFixed(2)}kN/m`,
+				ctx.fillText(`${force.newtons_per_metre.toFixed(2)}${force_unit}N/m`,
 							  xy2[0] - arrow_length, xy2[1] - 5);
 			}
 			draw_uniform_line();
@@ -514,6 +538,8 @@ function draw_diagram(data) {
 	
 }
 
+//FRONT PAGE STUFF - i.e. ADDING EXTRA FORCES AND CLICKING BUTTONS
+
 //why does this work?
 //nevermind i figured it out, this is pretty smart
 //if the validation returns false, then the form is allowed
@@ -539,7 +565,6 @@ function check_validation() {
 	return false;
 }
 
-
 const button = document.querySelector("button[type='submit']");
 
 button.addEventListener("click", event => {
@@ -554,7 +579,50 @@ button.addEventListener("click", event => {
 	console.log(data);
 });
 
-// add extra forces.
+function calculate_no_reactions() {
+	const data = get_data();
+	data.show_reactions = false;
+	data.show_forces = true;
+	calculate_roller_reaction(data);
+	calculate_hinge_reaction(data);
+	draw_diagram(data);
+}
+
+//note - sometimes keydown lags behind by like 1 input. So keyup is used here instead.
+function calculate_as_you_enter() {
+	const all_inputs = document.querySelectorAll("input");
+	
+	for (const input of all_inputs.values()) {
+		input.addEventListener("keyup", calculate_no_reactions);
+	}
+}
+
+calculate_as_you_enter();
+
+function allow_switch_force_units() {
+	const unit_buttons = document.querySelectorAll("input[name='force-units']");
+	
+	for (const button of unit_buttons.values()) {
+		button.addEventListener("click", event => {
+			const labels = document.querySelectorAll(".force-section label");
+			force_unit = button.value;
+			for (const label of labels.values()) {
+				label.textContent = label.textContent.replaceAll(/[kMG]?N/g, `${force_unit}N`);
+			}
+			
+			calculate_no_reactions();
+			
+		});
+	}
+}
+
+//switch to kN once page loads so it doesn't load as N checked with kN displayed.
+window.addEventListener("load", (event) => {
+  document.querySelector("#kN").checked = true;
+});
+
+let force_unit = "k";
+allow_switch_force_units();
 
 function make_force_adder() {
 	let counter = 0;
@@ -566,6 +634,7 @@ function make_force_adder() {
 		input.setAttribute("name", property);
 		input.setAttribute("type", "number");
 		input.setAttribute("step", "any");
+		input.addEventListener("keyup", calculate_no_reactions);
 		counter += 1;
 	}
 	
@@ -583,16 +652,26 @@ function make_force_adder() {
 		const hr = document.createElement("hr");
 		const div = document.createElement("div");
 		fieldset.insertBefore(hr, button);
+
+		const delete_button = document.createElement("button");
+		delete_button.setAttribute("type", "button");
+		delete_button.textContent = "Delete force";
+		delete_button.addEventListener("click", event => { 
+			div.remove();
+			hr.remove();
+			calculate_no_reactions();
+		});
+		div.appendChild(delete_button);
 		
 		if (force_type === "uniform") {
-			div.appendChild(make_property_para("force", "kN per metre (kN/m): "));
+			div.appendChild(make_property_para("force", `${force_unit}N per metre (${force_unit}N/m): `));
 			div.appendChild(make_property_para("starting-position", "Starting position (m): "));
 			div.appendChild(make_property_para("ending-position", "Ending position (m): "));
 			fieldset.insertBefore(div, button);
 			return "finished";
 		} 
 		
-		div.appendChild(make_property_para("force", "Force (kN): "));
+		div.appendChild(make_property_para("force", `Force (${force_unit}N): `));
 		div.appendChild(make_property_para("position", "Position (m): "));
 		
 		//There are two if statements instead of one else if
@@ -640,3 +719,27 @@ uniform_force_button.addEventListener("click", event => {
 	const fieldset = document.querySelector(".uniform");
 	force_adder("uniform", event.currentTarget, fieldset);
 });
+
+function prevent_accidental_reset() {
+	const resetButton = document.querySelector("input[type='reset']");
+	let true_reset = false;
+	resetButton.addEventListener("click", event => {
+		if (true_reset) {
+			clearTimeout(true_reset);
+			true_reset = false;
+			resetButton.value = "Reset Data";
+			return undefined;
+		} else {
+			event.preventDefault();
+			true_reset = setTimeout(() => {
+							true_reset = false;
+							resetButton.value = "Reset Data";
+					     }, 1000);
+			
+			resetButton.value = "Are you sure?";
+		}
+	});
+}
+
+prevent_accidental_reset();
+	

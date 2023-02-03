@@ -21,7 +21,7 @@ form {
 	min-height: 250px;
 }
 
-input {
+input[type="number"] {
   appearance: none;
   font-family: inherit;
   font-size: 100%;
@@ -35,21 +35,13 @@ input:invalid {
 	border: 1px solid red;
 }
 
-input[type="checkbox"] {
-	transition: 0.2s all;
-}
-
-input[type="checkbox"]:checked::before {
-	content: "✓";
-	position: absolute;
-	top: 0;
-	left: 0;
-}
-
-
 button[type="submit"] {
 	padding: 3px;
-	width: 100px;
-	height: 30px;
+	width: 150px;
+	height: 50px;
+	font-size: 1.5em;
 }
 
+input[type='reset'] {
+	margin-bottom: 10px;
+}
