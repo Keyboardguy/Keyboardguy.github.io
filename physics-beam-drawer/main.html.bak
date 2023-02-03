@@ -104,8 +104,8 @@
 					<button type="button" id="add-uniform-force" class="add-force"> Add another force</button>
 				</fieldset>
 			</section>
-			<button type="submit">Calculate</button> <br>
-			<input type="reset" value="Reset Data">
+			<input type="reset" value="Reset Data"> <br>
+			<button type="submit">Calculate</button> 
 		</form>
 	</body>
 </html>
