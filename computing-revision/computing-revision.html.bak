@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Revision Website</title>
+		<meta name="author" content="George">
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<header>
+			<h1> Computing<br>science</h1>
+		</header>
+		<main>
+			<aside>
+				<ul>
+					<li><a href="#unit1">Software Design and Development</a></li>
+					<li><a href="#unit2">Databases</a></li>
+					<li><a href="#unit3">Computer Theory</a></li>
+				</ul>
+			</aside>
+			<section>
+			
+			<article id="unit1">
+				<h2> Unit 1 - Software Design and Development </h2>
+				<h3> Process of making software </h3>
+				<p>There are seven stages to making software.</p>
+				<ol>
+					<li>Analysis</li>
+					<li>Design</li>
+					<li>Implementation</li>
+					<li>Testing</li>
+					<li>Documentation</li>
+					<li>Evaluation</li>
+					<li>Maintenance</li>
+				</ol>
+				<p>You can use the mnemonic 'A Dance In The Dark Every Monday' to remember this.</p>
+				
+				<h3>Design stage</h3>
+				<p>There are 3 design methods in nat 5.</p>
+				<ul>
+					<li>Structure Charts</li>
+					<li>Pseudocode</li>
+					<li>Flow chart</li>
+				</ul>
+				<p>However, there is also another that is <span class="danger">only used for screen layouts, not code</span>.</p>
+				<p>Wireframes are used as a design technique for screen layouts. They help show the User Interface (UI).</p>
+				<p>I'm going to link the sqa page for these techniques, as they're very nice and save me effort.</p>
+				<a href="https://www.sqa.org.uk/files_ccc/ComputingScienceCourseSpecN5.pdf">SQA Course Specifications</a>
+				<p>Look at pages 42 - 49.</p>
+				<p>Besides those pages, theres actually quite a bit of good stuff there.</p>
+				
+				
+				
+				<h3>Predefined functions</h3>
+				<p>The three pre-defined functions for N5 are <code>random</code>, <code>round</code>, and <code>length</code>.</p>
+				<p>Parameters are arguments inside the brackets of functions.<br>e.g. <code>round(2.53, 2)</code> - the parameters are <code>2.53</code> and <code>2</code>.</p>
+				
+				<h3>Assignment and arithmetic operations</h3>
+				<p>Assignment is giving a variable a value.<br>e.g. <code><var>age</var> = 7</code></p>
+				
+				<p>There are 5 different arithmetic operations for N5.</p>
+				<ul>
+					<li>Subtraction - <code>-</code></li>
+					<li>Addition - <code>+</code><br><span class="note">Note - this is the same operator for concatenation in python.</span></li>
+					<li>Multiplication - <code>*</code></li>
+					<li>Divison - <code>/</code></li>
+					<li>Exponentiation - <code>^</code><br><span class="note">Note - In python exponentiation is <code>**</code>.</span></li>
+				</ul>
+				
+				<h3>Concatenation</h3>
+				<p>Concatenation is joining text strings together to make a new text string.</p>
+				<p>An example in python: <br><code class="codeWithOutput">print("Hello " + "World!")</code><br><samp>Hello World!</samp></p>
+				
+				<h3>Loops</h3>
+				<p> There are two loops. </p>
+				<dl>
+					<dt>Fixed loop</dt>
+					<dd>A loop that repeats a sequence of code a set number of times. <br><span class="danger">Never</span> call this a for loop.</dd>
+					<dt>Conditional loop</dt>
+					<dd>A loop that repeats code until a condition is met. <br><span class="danger">Never</span> call this a while loop.</dd>
+				</dl>
+				
+				<h3>Examples of standard algorithms in Python</h3>
+				<dl>
+					<dt>Input validation</dt>
+					<dd><pre><code><var>mark</var> = int(input("Enter mark"))
+while <var>mark</var> &lt; 0 or <var>mark</var> &gt; 10:
+	print("mark must be between 0 and 10")
+	<var>mark</var> = int(input("re-entermark"))
+#end while</code></pre></dd>
+					<dt>Running total</dt>
+					<dd><pre><code>for <var>counter</var> in range(0,3):
+	<var>mark</var> = int(input("Enter mark"))
+	<var>total</var> = <var>total</var> + <var>mark</var>
+#end for</code></pre></dd>
+					<dt>Traversing a 1-D array</dt>
+					<dd><pre><code><var>ages</var> = [8,10,12]
+for <var>counter</var> in range(0,3):
+	print(<var>ages</var>[<var>counter</var>])
+#end for</code></pre></dd>
+				</dl>
+				<h3>Types of errors</h3>
+				<p>There are 3 types of errors.</p>
+				<dl>
+					<dt>Syntax</dt>
+					<dd>An error in the spelling or grammar used when coding. The program will not execute. <br> e.g. <code>print("hi</code></dd>
+					<dt>Logic</dt>
+					<dd>An error in the logic of the code. The program will execute, but will give unexpected results.<br> e.g. <code>areaOfCircle = 3.14 * radius</code></dd>
+					<dt>Runtime
+					<dd>An error that only becomes evident in runtime. An error will occur at runtime.<br>e.g. <code>sum = number / 0</code></dd>
+				</dl>
+				
+				<h3>Types of variable</h3>
+				<p>There are 5 types of variable. (although i dont know if you need to know their definitions)</p>
+				<dl>
+					<dt>Integer</dt>
+					<dd>A whole number. Can be negative or positive, including 0.</dd>
+					<dt>Real (float)</dt>
+					<dd>A number with a fractional part. e.g. <code>3.5</code><br><span class="note">Note - Call them real numbers in the exam, not floats.</span></dd>
+					<dt>String</dt>
+					<dd>Any text. Even <code>""</code> would count as a string.</dd>
+					<dt>Char</dt>
+					<dd>Stores one character.</dd>
+					<dt>Boolean</dt>
+					<dd>Something that has two possible values, true or false.</dd>
+				</dl>
+				
+				<h3>Arrays</h3>
+				<p>An array is a single variable with a series of values. It is a <strong>data structure</strong>.</p>
+				
+				<h3>Operators</h3>
+					<ul>
+						<li><code>&gt;</code> - greater than</li>
+						<li><code>&lt;</code> - less than</li>
+						<li><code>&gt;=</code> - greater than or equal</li>
+						<li><code>&lt;=</code> - less than or equal</li>
+						<li><code>!=</code> - not equal</li>
+						<li><code>==</code> - equal</li>
+					</ul>
+					
+					<p>Note - the SQA displays these as &gt;, &lt;, ≥, ≤, ≠, = in the course specifications.</p>
+				<h3>Logical operators</h3>
+				<p>These are used to include two or more parts of a condition, or the opposite of a condition.</p>
+				<dl>
+					<dt>AND</dt>
+					<dd>Evaluates as true when all parts of the condition are true.<br>e.g. <code>if points &gt; 16 and average &gt; 5</code></dd>
+					<dt>OR</dt>
+					<dd>Evaluates as true if one of the conditions is true.<br>e.g. <code>if age &gt; 18 or money &lt; 200</code></dd>
+					<dt>NOT</dt>
+					<dd>Returns the opposite of the condition.<br>e.g. <code>IF NOT (score = 0)</code><br><span class="note">Note - this is psuedocode unlike the others, which were in python.</span></dd>
+				</dl>
+				
+				<h3>Selection constructs using complex conditional statements</h3>
+				<p>This sounds very complicated, but its not.</p>
+				<p>A conditional statement can be simple with only one condition.<br>e.g. <code>age > 18</code></p>
+				<p>A complex conditional statement is a conditional statement with more than one condition.<br>e.g. <code>age > 18 and hasDrivingLiscence == true</code>,<br><code>NOT (score = 0)</code></p>
+				<p>A selection construct is a section of code that is only run if a condition is met (if, while).
+				<p>Essentially just a conditional statement with one or more logical operators.</p>
+				<h3>Program Readability</h3>
+				<p>There are 4 parts to program readability.</p>
+				<ul>
+					<li>Internal commentary</li>
+					<li>Indentation</li>
+					<li>White space</li>
+					<li>Meaningful indentifiers (sensible variable names)</li>
+				</ul>
+				
+				<h3>Test data</h3>
+				<p>For example, if <code>age</code> has to be between 18 and 30.</p>
+				<dl>
+					<dt>Normal test data</dt>
+					<dd>Test data that is expected and should be accepted.<br>e.g. <code>age</code> is 23.</dd>
+					<dt>Extreme test data</dt>
+					<dd>Test data that falls at the boundary of any possible ranges.<br>e.g. <code>age</code> is 30.</dd>
+					<dt>Exceptional test data</dt>
+					<dd>Test data that the progrem should not accept.<br>e.g. <code>age</code> is 96.</dd>
+				</dl>
+				
+				<h3>Fitness for purpose & Robustness</h3>
+				<p>Software is deemed <strong>fit for purpose</strong> if it meets the requiremnets determined at the analysis phase.</p>
+				
+				<p>Software is deemed <strong>robust</strong> if it can cope with unexpected or incorrect input.</p>
+			</article>
+			<article id="unit2">
+				<h2> Unit 2 - Databases </h2>
+				<p>Not going to cover web design here.</p>
+				
+				<h3>Look at your in-class notes im pretty sure that all the definitons and stuff are already there.</h3>
+			</article>
+			<article id="unit3">
+				<h2> Unit 3 - Computer theory or something i forgot </h2>
+				<h3>Binary</h3>
+				<p>Binary is the base 2 number system. It is represented with 1s and 0s.</p>
+				<p>Base 10 (our number system) is called denary.</p>
+				<p>1 bit stores 1 or 0.</p>
+				<p>There are <strong>8 bits in 1 byte</strong>.</p>
+				<p>To find the max number you can store with a certain number of bits, use the formula 2<sup>n</sup>-1, where n = number of bits.</p>
+				<p>The minimum is always 0.</p>
+				<p>To find the total number of numbers you can store with a certain number of bits, use the formula 2<sup>n</sup>, where n = number of bits.</p>
+				<p>e.g. with 7 bits:</p>
+				<ul>
+					<li>max = 2<sup>7</sup>-1 = 127</li>
+					<li>min = 0</li>
+					<li>total = 2<sup>7</sup> = 128</li>
+				</ul>
+				
+				<h3>Converting binary to denary</h3>
+				<p>Read the binary number from <strong>right to left</strong> In that order, each binary digit is worth 2x more than the previous.</p>
+				<p>For example, the rightmost binary digit is 1. The second rightmost is 2. The third is 4. The fourth is 8. And so on.</p>
+				<table>
+					<tbody>
+					<tr>
+						<th scope="row">2<sup>n</sup></th>
+						<td>2<sup>7</sup></td>
+						<td>2<sup>6</sup></td>
+						<td>2<sup>5</sup></td>
+						<td>2<sup>4</sup></td>
+						<td>2<sup>3</sup></td>
+						<td>2<sup>2</sup></td>
+						<td>2<sup>1</sup></td>
+						<td>2<sup>0</sup></td>
+					</tr>
+					<tr>
+						<th scope="row">2<sup>n</sup> in denary</th>
+						<td>128</td>
+						<td>64</td>
+						<td>32</td>
+						<td>16</td>
+						<td>8</td>
+						<td>4</td>
+						<td>2</td>
+						<td>1</td>
+					</tr>
+					<tr>
+						<th scope="row">Example binary number</th>
+						<td>1</td>
+						<td>1</td>
+						<td>0</td>
+						<td>0</td>
+						<td>0</td>
+						<td>1</td>
+						<td>0</td>
+						<td>1</td>
+					</tr>
+					</tbody>
+				</table>
+				<p>The example binary number of 11000101 is displayed above.</p>
+				<p>To find what this is equal to, look at each column with a 1 in the digit. Then add the denary equivalent to the total</p>
+				<p>So 11000101 = 128+64+4+1 = 197.</p>
+					
+				<h3>Converting denary to binary</h3>
+				<ol class="spacedList">
+					<li>Find the biggest power of 2 that fits into the number.</li>
+					<li>Write a '1' and then subtract that denary equivalent from the total number.</li>
+					<li>Move onto the previous power of two. If it is too big to fit into the number, then write a 0 and don't subtract anything from the total. Otherwise, do step 2.</li>
+					<li>Repeat step 3 until you reach 2^0, even if you reach 0 at the total before the last digit.</li>
+				</ol>
+				
+				<p>e.g. Convert 99 into binary</p>
+				<ol>
+					<li>The biggest power of 2 that fits into 99 is 2<sup>6</sup>.
+					<li>64 (2<sup>6</sup>) fits into 99. 99 - 64 = 35. <strong>1</strong></li>
+					<li>32 (2<sup>5</sup>) fits into 35. 35 - 32 = 3. <strong>1</strong></li>
+					<li>16 (2<sup>4</sup>) does not fit into 3. <strong>0</strong></li>
+					<li>8 (2<sup>3</sup>) does not fit into 3. <strong>0</strong></li>
+					<li>4 (2<sup>2</sup>) does not fit into 3. <strong>0</strong></li>
+					<li>2 (2<sup>1</sup>) fits into 3. <strong>1</strong></li>
+					<li>1 (2<sup>0</sup>) fits into 1. <strong>1</strong></li>
+				</ol>
+				<p>So the final answer is 1100011. <span class="note">Note - Sometimes a question will say 'convert into a <strong>8 bit binary number</strong>. In this case, add 0's at the start until it reaches 8 bits in length. So 99 would be <strong>0</strong>1100011 in 8 bits.</span></p>
+				
+				<h3>Real numbers</h3>
+				<p>A real number is a number with a fractional part. So as an example:</p>
+				<ul>
+					<li>±7 - integer</li>
+					<li>±7.4 - real</li>
+				</ul>
+				
+				<p>A computer stores real numbers using a mantissa and exponent.<br><span class="note">Note - This is the answer to a 2 mark question - 'How do computers store real numbers?' You get one mark for writing 'mantissa' and one for writing 'exponent'.</span></p>
+				
+				<p>0.<span class="mantissa">7894</span> x 10<sup class="exponent">3</sup></p>
+				
+				<ul>
+					<li>Mantissa - highlighted in pink - 7894<br><span class="danger">Never write the '<strong>0.</strong>'</li>
+					<li>Exponent - highlighted in blue (aqua) - 3<br><span class="danger">Never write the '<strong>x 10</strong>'</li>
+				</ul>
+				<p>It doesn't matter if the number is given in binary. Simply write what is there - no need to convert.</p>
+				
+				<p>0.<span class="mantissa">11011</span> x 2<sup class="exponent">110</sup></p>
+		
+				<ul>
+					<li>Mantissa - highlighted in pink - 11011</li>
+					<li>Exponent - highlighted in blue (aqua) - 110</li>
+				</ul>
+				
+				<p>0.<span class="mantissa">1875</span> x 10<sup class="exponent">110</sup></p>
+		
+				<ul>
+					<li>Mantissa - highlighted in pink - 1875</li>
+					<li>Exponent - highlighted in blue (aqua) - 110</li>
+				</ul>
+				
+				<h3>Bitmap graphics</h3>
+				<p>These are stored as a <strong>grid of pixels</strong>, with <strong>each pixel stored in binary</strong>.</p>
+				<p>They have a large file size. It never goes up if image changes (unless resolution or bit depth changes).</p>
+				<p>In black and white, the bit depth is 1. Meaining, each pixel = 1 bit.</p>
+				<p>In true colour, the bit depth is 24. Meaning, each pixel = 24 bits.</p> 
+				
+				<h3>Vector graphics</h3>
+				<p>These are stored as <strong>Objects + Attributes</strong>.</p>
+				<p>They have a small file size. If more shapes are added, file size goes up.</p>
+				
+				<p>There are 4 objects you need to know.</p>
+				
+				<ul>
+					<li>Rectangle (can look like square)</li>
+					<li>Ellipse (looks like an oval + can look like circle)</li>
+					<li>Line</li>
+					<li>Polygon (anything else not covered by the previous) </li>
+				</ul>
+				
+				<p>There are 3 attributes you need to know. You don't need to know the values for them.</p>
+				
+				<ul>
+					<li>Line colour</li>
+					<li>Fill colour</li>
+					<li>XY coordinates</li>
+				</ul>
+				
+				<h3>High vs Low level language</h3>
+				<p>A high level programming language is close to human languages.</p>
+				<p>A low level programming language is close to machine instructions.</p>
+				
+				<h3>Interpreter</h3>
+				<p>A programming interpreter translates each instruction in turn.<br>It returns a <strong>single error</strong>.<br><span class="danger note">Note - Never say translates line-by-line. This applies to both interpreters and compilers.</span></p>
+				<p>It must be installed on the machine, and the code needs to be translated every time it is run. This leads to:</p>
+				<ul>
+					<li>More backing storage</li>
+					<li>More RAM</li>
+					<li>More processing power</li>
+				</ul>
+				
+				<p>Best for dev phase because it returns a single error.</p>
+				
+				<h3>Compiler</h3>
+				<p>A programming language compiler translates an entire program's source code into machine code at once.<br>It returns <strong>many errors</strong>.</p>
+				<p>When error free, it creates Object Code.</p>
+				<ul>
+					<li>Object code - 111010101... etc.</li>
+					<li>Object code does <strong>not</strong> need further translation.</li>
+				</ul>
+				
+				<h3>RAM and buses</h3>
+				<p>RAM is very fast access.</p>
+				<p>Buses are wires.</p>
+				
+				<img srcset="images/ram-cpu-370px.png 370w,
+							 images/ram-cpu-520px.png 520w, 
+							 images/ram-cpu-740px.png 740w"
+					 
+					 sizes="(max-width: 400px) 370px,
+							(max-width: 729px) 520px,
+							740px"
+					 
+					 src="images/ram-cpu-740px.png"
+					 
+					 alt="RAM CPU diagram">
+				
+				<p>Each location in the RAM has a unique address, which is stored as a binary number.</p>
+				<p>The address bus carries the address of the location.</p>
+				<p>The data bus transfers data from CPU to RAM, or RAM to CPU.</p>
+				
+				<h3>CPU (processor)</h3>
+				<p>The CPU has 3 parts.</p>
+				<dl>
+					<dt>ALU (arithmetic logic unit)</dt>
+					<dd>The ALU carries out arithmetic and logical operations.<br><span class="danger">You need to know what it stands for - Arithmetic Logic Unit</span></dd>
+					<dt>Registers</dt>
+					<dd>Temporary storage location. Very, VERY fast access (faster than RAM).
+					<dt>Control Unit</dt>
+					<dd>Manages system events + decides if read or write operation.</dd>
+				</dl>
+				
+				<h3>Firewalls and encryption</h3>
+				<p>Encryption allows secure transit of data.</p>
+				<p>A firewall blocks traffic and looks for odd behavior. It keeps your computer system secure.</p>
+				
+				<h3>Energy usage</h3>
+				<p>There are a couple of ways to reduce power consumption.</p>
+				<ul>
+					<li>Lower brightness of monitor</li>
+					<li>Turn machine off when not in use</li>
+					<li>Put machine on standby mode (to sleep) when not in use</li>
+				</ul>
+				
+			</article>
+			</section>
+		</main>
+	</body>
+</html>
