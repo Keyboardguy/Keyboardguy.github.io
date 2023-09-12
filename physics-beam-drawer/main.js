@@ -129,6 +129,7 @@ function get_data() {
 	const data = {};
 	
 	data.beam_length = sanitize(document.querySelector("#beam-length").value);
+	data.has_roller = document.querySelector("#roller-position").value.length === 0 ? false : true;
 	data.roller_position = sanitize(document.querySelector("#roller-position").value);
 	data.hinge_position = sanitize(document.querySelector("#hinge-position").value);
 	data.show_forces = document.querySelector("#show-forces").checked;
@@ -167,8 +168,11 @@ function calculate_hinge_reaction(data) {
 			hinge_vertical_force += force.force;
 		}
 	}
-	
-	hinge_vertical_force += data.roller_reaction_force;
+
+	if (data.has_roller) {
+		hinge_vertical_force += data.roller_reaction_force;
+	}
+
 	hinge_horizontal_force = hinge_horizontal_force * -1;
 	data.hinge_reaction_force = Math.sqrt(square(hinge_vertical_force)
 							              + square(hinge_horizontal_force));
@@ -177,7 +181,7 @@ function calculate_hinge_reaction(data) {
 	const angle = (hinge_horizontal_force !== 0)
 				  ? rad_to_deg(Math.atan(Math.abs(hinge_vertical_force) / Math.abs(hinge_horizontal_force)))
 				  : 90;
-	
+
 	data.hinge_angle = (hinge_horizontal_force >= 0 && hinge_vertical_force >= 0
 						? 90 - angle
 						: hinge_horizontal_force >= 0 
@@ -518,7 +522,9 @@ function draw_diagram(data) {
 	canvas_data.width = canvas.width;
 	canvas_data.height = canvas.height;
 	canvas_data.x_distances = [];
-	canvas_data.x_distances.push(data.roller_position);
+	if (data.has_roller) {
+		canvas_data.x_distances.push(data.roller_position);
+	}
 	canvas_data.x_distances.push(data.hinge_position);
 	ctx.fillStyle = "#FFFFFF";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -527,15 +533,13 @@ function draw_diagram(data) {
 	if (data.show_forces) {
 		draw_forces(100);
 	}
-	if (data.show_reactions) {
-		draw_hinge_all(100, true);
-		draw_support_all(100, true);
-	} else {
-		draw_hinge_all(100, false);
-		draw_support_all(100, false);	
-	}
+	// draw distances must come after drawing the forces as distance points are added to the x_distances during the force drawings.
 	draw_distances();
-	
+	// data.show_reactions is a boolean, which is passed to indicate if reaction force should be shown.
+	if (data.has_roller) {
+		draw_support_all(100, data.show_reactions);
+	}
+	draw_hinge_all(100, data.show_reactions);
 }
 
 //FRONT PAGE STUFF - i.e. ADDING EXTRA FORCES AND CLICKING BUTTONS
@@ -567,33 +571,34 @@ function check_validation() {
 
 const button = document.querySelector("button[type='submit']");
 
-button.addEventListener("click", event => {
-	if (check_validation()) {
-		return 0;
+function do_calculations(event=false) {
+	// IMPORTANT NOTE 
+	// the roller reactions MUST be calculated before the hinge reactions, as it is dependant on it.
+	if (event) {
+		if (check_validation()) {
+			return 0;
+		}
+		event.preventDefault();
 	}
-	event.preventDefault();
+	
 	const data = get_data();
-	calculate_roller_reaction(data);
-	calculate_hinge_reaction(data);
-	draw_diagram(data);
-	console.log(data);
-});
-
-function calculate_no_reactions() {
-	const data = get_data();
-	data.show_reactions = false;
-	data.show_forces = true;
-	calculate_roller_reaction(data);
+	if (data.has_roller) {
+		calculate_roller_reaction(data);
+	}
 	calculate_hinge_reaction(data);
 	draw_diagram(data);
 }
+
+button.addEventListener("click", event => {
+	do_calculations(event);
+});
 
 //note - sometimes keydown lags behind by like 1 input. So keyup is used here instead.
 function calculate_as_you_enter() {
 	const all_inputs = document.querySelectorAll("input");
 	
 	for (const input of all_inputs.values()) {
-		input.addEventListener("keyup", calculate_no_reactions);
+		input.addEventListener("keyup", do_calculations);
 	}
 }
 
@@ -610,7 +615,7 @@ function allow_switch_force_units() {
 				label.textContent = label.textContent.replaceAll(/[kMG]?N/g, `${force_unit}N`);
 			}
 			
-			calculate_no_reactions();
+			do_calculations();
 			
 		});
 	}
@@ -634,7 +639,7 @@ function make_force_adder() {
 		input.setAttribute("name", property);
 		input.setAttribute("type", "number");
 		input.setAttribute("step", "any");
-		input.addEventListener("keyup", calculate_no_reactions);
+		input.addEventListener("keyup", do_calculations);
 		counter += 1;
 	}
 	
@@ -659,7 +664,7 @@ function make_force_adder() {
 		delete_button.addEventListener("click", event => { 
 			div.remove();
 			hr.remove();
-			calculate_no_reactions();
+			do_calculations;
 		});
 		div.appendChild(delete_button);
 		
