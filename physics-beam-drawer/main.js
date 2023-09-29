@@ -589,9 +589,7 @@ function do_calculations(event=false) {
 	draw_diagram(data);
 }
 
-button.addEventListener("click", event => {
-	do_calculations(event);
-});
+button.addEventListener("click", do_calculations);
 
 //note - sometimes keydown lags behind by like 1 input. So keyup is used here instead.
 function calculate_as_you_enter() {
