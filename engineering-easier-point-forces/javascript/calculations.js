@@ -1,3 +1,4 @@
+"use strict"
 function deg_to_rad(x) {
 	return x * (Math.PI / 180);
 }
@@ -37,3 +38,4 @@ export function get_reaction(data) {
 
     return 1;
 }
+

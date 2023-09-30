@@ -1,9 +1,11 @@
 "use strict";
 //coding is hard
 
-import { get_reaction } from calculations.js
+import { get_reaction } from "./calculations.js"
+import { draw_diagram } from "./draw.js"
 
 class Force {
+	// I am making all the forces negative, cause for this problem it seems as if pulling forces are better.
 	// left force is negative, right force is positive.
 	// down force is negative, up force is positive.
 	constructor(force, angle) {
@@ -33,14 +35,19 @@ class Force {
 	}
 }
 
+function deg_to_rad(x) {
+	return x * (Math.PI / 180);
+}
+
 function get_data() {
 	function sanitize(x) {
 		const x_to_number = Number(x.replaceAll(/^0*/gi, ""));
 		return isNaN(x_to_number) ? 0 : x_to_number;
 	}
 	
-	function add_forces_to_data(fieldsets) {
-		// document.querySelector(".simple").classList[0];
+	function add_forces_to_data() {
+		const force_list = [];
+
 		function add_force_type(properties, force_class, group_length) {
 			if (properties.length < group_length) {
 				return undefined;
@@ -57,24 +64,80 @@ function get_data() {
 			properties.push(sanitize(property.value));
 		}
 					
-		add_force_type(properties, Force, 3);
+		add_force_type(properties, Force, 2);
 		
 		data.forces = force_list;
 	}
 	
 	const data = {};
-	const forces_fieldset = document.querySelectorAll(".oriented fieldset");
-	add_forces_to_data(forces_fieldset);
+	add_forces_to_data();
 	
 	return data;
 }
 
-function do_calculations() {
-	data = get_data();
+//why does this work?
+//nevermind i figured it out, this is pretty smart
+//if the validation returns false, then the form is allowed
+//to submit and return an error so i dont have to write it.
+// if it returns true, then it prevents default and draws the diagram.
+
+function check_validation() {
+	const all_inputs = document.querySelectorAll("input");
+	const angle_inputs = document.querySelectorAll("input[min]");
+	
+	for (const element of all_inputs.values()) {
+		if (element.validity.valueMissing) {
+			return true;
+		} else if (element.validity.badInput) {
+			return true;
+		}
+	}
+	
+	for (const element of angle_inputs.values())  {
+		if (element.validity.rangeOverflow || element.validity.rangeUnderflow) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function do_calculations(event=false) {
+	if (event) {
+		if (check_validation()) {
+			return 0;
+		}
+		event.preventDefault();
+	}
+	
+	const data = get_data();
 	get_reaction(data);
 	draw_diagram(data);
 }
 
+const button = document.querySelector("button[type='submit']");
+
+button.addEventListener("click", do_calculations);
+
+
+//note - sometimes keydown lags behind by like 1 input. So keyup is used here instead.
+function calculate_as_you_enter() {
+	const all_inputs = document.querySelectorAll("input");
+	
+	for (const input of all_inputs.values()) {
+		input.addEventListener("keyup", do_calculations);
+	}
+}
+
+calculate_as_you_enter();
+
+
+//Everything beyond this point is form stuff.
+
+//why does this work?
+//nevermind i figured it out, this is pretty smart
+//if the validation returns false, then the form is allowed
+//to submit and return an error so i dont have to write it.
+// if it returns true, then it prevents default and draws the diagram.
 
 function make_force_adder() {
 	let counter = 0;
@@ -116,7 +179,6 @@ function make_force_adder() {
 		div.appendChild(delete_button);
 		
 		div.appendChild(make_property_para("force", `Force (kN): `));
-		div.appendChild(make_property_para("position", "Position (m): "));
 		const angle_para = document.createElement("p");
 		const angle_label = document.createElement("label");
 		const angle_input = document.createElement("input");
