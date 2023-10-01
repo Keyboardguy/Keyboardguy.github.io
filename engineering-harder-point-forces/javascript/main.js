@@ -4,7 +4,14 @@
 import { get_reaction } from "./calculations.js"
 import { draw_diagram } from "./draw.js"
 
-class Force {
+class UnknownForce {
+	// The force and horizontal force, etc will all get assigned in the calculations.js file.
+	constructor(angle) {
+		this.angle = Math.abs(angle) === 360 ? 0 : angle;
+	}
+}
+
+class KnownForce {
 	// the negative multiplying for the horiz/vertical force is different for the beam drawer,
 	// because a pulling force is entered instead of a pushing force.
 	// left force is negative, right force is positive.
@@ -47,32 +54,20 @@ function get_data() {
 	}
 	
 	function add_forces_to_data() {
-		const force_list = [];
-
-		function add_force_type(properties, force_class, group_length) {
-			if (properties.length < group_length) {
-				return undefined;
-			} else {
-				force_list.push(new force_class(...properties.slice(0, group_length)));
-				add_force_type(properties.slice(group_length), force_class, group_length);
-			}
-		}
-		
+		// This is VERY finicky. The inputs must come in a very specific order for this to work, so not very scalable. Might change later.
 		const input_force_properties = document.querySelectorAll(`.oriented input`);
 		const properties = [];
 			
 		for (const property of input_force_properties.values()) {
 			properties.push(sanitize(property.value));
 		}
-					
-		add_force_type(properties, Force, 2);
-		
-		data.forces = force_list;
+
+		data.known_force = new KnownForce(properties[0], properties[1]);
+		data.unknown_forces = [new UnknownForce(properties[2]), new UnknownForce(properties[3])];
 	}
 	
 	const data = {};
 	add_forces_to_data();
-	
 	return data;
 }
 

@@ -15,33 +15,33 @@
 		</canvas>
 		
 		<div class="details">
-		<form>
-			<fieldset class="oriented">
-				<legend> Forces </legend>
-				<div>
-					<p>
-						<label for="force">Force (kN):</label>
-						<input type="number" id="force" name="force" step="any" />
-					</p>
-			
-					<p>
-						<label for="angle">Angle measured from clockwise vertical (°):</label>
-						<input type="number" id="angle" name="angle" min="-360" max="360" step="any" />
-					</p>
-				</div>
-				<button type="button" id="add-oriented-force">Add another force</button>
-			</fieldset>
-			<button type="submit">Calculate</button> 
-			<input type="reset" value="Reset Data">
-		</form>
-		<div class="resultant_details">
-			<h2>Reaction Data</h2>
-			<p>F<sub>H</sub> = <span id="reaction_horizontal_force">0</span></p>
-			<p>F<sub>V</sub> = <span id="reaction_vertical_force">0</span></p>
-			<p>F = <span id="reaction_force">0</span></p>
-			<p>Angle (from clockwise vertical) = <span id="reaction_angle">0</span>°</p>
-			<p><span id="reaction_strut_or_tie"></span></p>
-		</div>
+			<form>
+				<fieldset class="oriented">
+					<legend> Forces </legend>
+					<div>
+						<p>
+							<label for="force">Force (kN):</label>
+							<input type="number" id="force" name="force" step="any" />
+						</p>
+				
+						<p>
+							<label for="angle">Angle measured from clockwise vertical (°):</label>
+							<input type="number" id="angle" name="angle" min="-360" max="360" step="any" />
+						</p>
+					</div>
+					<button type="button" id="add-oriented-force">Add another force</button>
+				</fieldset>
+				<button type="submit">Calculate</button> 
+				<input type="reset" value="Reset Data">
+			</form>
+			<div class="resultant_details">
+				<h2>Reaction Data</h2>
+				<p>F<sub>H</sub> = <span id="reaction_horizontal_force">0</span></p>
+				<p>F<sub>V</sub> = <span id="reaction_vertical_force">0</span></p>
+				<p>F = <span id="reaction_force">0</span></p>
+				<p>Angle (from clockwise vertical) = <span id="reaction_angle">0</span>°</p>
+				<p><span id="reaction_strut_or_tie"></span></p>
+			</div>
 		</div>
 	</body>
 </html>

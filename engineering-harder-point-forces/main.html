@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	    <title>Easier forces on a point</title>
+		<link rel="stylesheet" href="style.css">
+		<script src="./javascript/main.js" type="module"></script>
+	</head>
+	<body>
+		<h1>Forces on a point</h1>
+		<canvas id="diagram" width="1200" height="600">
+			<p> There is supposed to be a diagram here, but it doesn't work on your device for some reason. </p>
+			<p> I don't take engineering, so you might have to ask me to fix it otherwide I wont notice. </p>
+		</canvas>
+		
+		<form>
+			<div class="details">
+				<fieldset class="oriented known">
+					<legend> Known Force </legend>
+					<div>
+						<p>
+							<label for="force">Force (kN):</label>
+							<input type="number" id="force" name="force" step="any" />
+						</p>
+				
+						<p>
+							<label for="angle">Angle measured from clockwise vertical (°):</label>
+							<input type="number" id="angle" name="angle" min="-360" max="360" step="any" />
+						</p>
+					</div>
+				</fieldset>
+				<fieldset class="oriented unknown">
+					<legend> Unknown Force </legend>
+					<div>
+						<p>
+							<label for="force">Calculated Force (kN): <span class="calculated_force">?</span></label>
+						</p>
+				
+						<p>
+							<label for="angle">Angle measured from clockwise vertical (°):</label>
+							<input type="number" id="angle" name="angle" min="-360" max="360" step="any" />
+						</p>
+					</div>
+				</fieldset>
+				<fieldset class="oriented unknown">
+					<legend> Unknown Force </legend>
+					<div>
+						<p>
+							<label for="force">Calculated Force (kN): <span class="calculated_force">?</span></label>
+						</p>
+				
+						<p>
+							<label for="angle">Angle measured from clockwise vertical (°):</label>
+							<input type="number" id="angle" name="angle" min="-360" max="360" step="any" />
+						</p>
+					</div>
+				</fieldset>
+			</div>
+			<button type="submit">Calculate</button> 
+			<input type="reset" value="Reset Data">
+		</form>
+	</body>
+</html>
