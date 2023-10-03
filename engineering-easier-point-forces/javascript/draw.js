@@ -52,12 +52,58 @@ export function draw_diagram(data) {
 	function rotate_points_by_angle(x, y, angle, arrow_length) {
 		// assume the angle is measured clockwise from the vertical
 		// returns an array with new x at 0 index and y at 1 index.
+		// x and y are the tail end of the arrow that needs to be rotated (the centre),
+		// the new points are the points on the tip of the arrow.
 		
 		return [Math.sin(deg_to_rad(angle)) * arrow_length + x,
 				y - Math.cos(deg_to_rad(angle)) * arrow_length]
 	}
+
+	function make_force_angle_drawer() {
+		const current_quadrant_angles = [0,0,0,0]
+
+		function draw_force_angle(force, arrow_length) {
+			ctx.save()
+			const quadrant = Math.floor(force.positive_angle / 90);
+			const acute_angle = force.positive_angle % 90;	
+			const start_angle_radians = -0.5 * Math.PI + (quadrant * (Math.PI / 2));
+			ctx.beginPath();
+			ctx.arc(canvas_data.centre[0], canvas_data.centre[1], arrow_length / 2,
+					start_angle_radians + deg_to_rad(current_quadrant_angles[quadrant]),
+				    start_angle_radians + deg_to_rad(acute_angle));
+			ctx.stroke();
+
+			// so quadrant angle text doesn't overlap with the angle circle bit.
+			const adjusting_length = quadrant % 2 === 0
+								     ? acute_angle / 90 * 10
+									 : 15;
+
+			const text_position = rotate_points_by_angle(canvas_data.centre[0],
+														 canvas_data.centre[1],
+														 force.positive_angle - ((acute_angle - current_quadrant_angles[quadrant]) / 2),
+														 arrow_length / 2 + 20 + adjusting_length);
+			ctx.fillText(`${(acute_angle - current_quadrant_angles[quadrant]).toFixed(2)}°`,
+						  text_position[0], text_position[1]);
+			ctx.restore()
+			current_quadrant_angles[quadrant] = acute_angle;
+		}
+		return draw_force_angle;
+	}
+
+	const draw_force_angle = make_force_angle_drawer();
+
+	function draw_axis(size) {
+		ctx.save();
+		ctx.setLineDash([5, 5]);
+		ctx.strokeStyle = "#777777"
+		draw_line(canvas_data.centre[0] - (size / 2), canvas_data.centre[1],
+				  canvas_data.centre[0] + (size / 2), canvas_data.centre[1]);
+		draw_line(canvas_data.centre[0], canvas_data.centre[1] - (size / 2),
+				  canvas_data.centre[0], canvas_data.centre[1] + (size / 2));
+		ctx.restore();
+	}
 	
-	function draw_centre_point(arrow_length) {
+	function draw_centre_point() {
 		ctx.save();
 		ctx.fillStyle = "#000000";
         draw_filled_circle(canvas_data.centre[0], canvas_data.centre[1], 4);
@@ -65,7 +111,7 @@ export function draw_diagram(data) {
 	}
 	
 	function draw_forces(arrow_length) {
-        // This function draws the reaction force as well.
+0        // This function draws the reaction force as well.
 
 		function draw_force_arrow(x1, y1, x2, y2, force) {
 			return force < 0
@@ -78,8 +124,14 @@ export function draw_diagram(data) {
 											   canvas_data.centre[1],
 											   force.positive_angle,
 											   arrow_length);
+
+			const text_xy2 = rotate_points_by_angle(canvas_data.centre[0],
+											   	    canvas_data.centre[1],
+											        force.positive_angle,
+										  	        arrow_length + 25);
 											   
 			draw_force_arrow(canvas_data.centre[0], canvas_data.centre[1], xy2[0], xy2[1], force.force);
+			draw_force_angle(force, arrow_length);
 			
             /* TODO
 			draw_angle_from_vertical(force_x,
@@ -88,7 +140,7 @@ export function draw_diagram(data) {
 									 arrow_length); */
 									 
 			ctx.fillText(`${Math.abs(force.force.toFixed(2))}kN`,
-					     xy2[0] + 5, xy2[1] - 5);
+					     text_xy2[0], text_xy2[1]);
         }
 
         function draw_and_display_reaction() {
@@ -123,15 +175,16 @@ export function draw_diagram(data) {
 	
 	const canvas_data = {};
 	ctx.font = "20px Helvetica";
+	ctx.textBaseline = "middle";
+	ctx.textAlign = "center";
     canvas_data.centre = [canvas.width / 2, canvas.height / 2]
 	ctx.fillStyle = "#FFFFFF";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = "#000000";
 
+	draw_axis(350);
 	draw_forces(150);
 	draw_centre_point();
-
-	console.log(data)
 
     return 1;
 }
