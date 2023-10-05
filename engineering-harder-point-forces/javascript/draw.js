@@ -162,6 +162,8 @@ export function draw_diagram(data) {
 		
 		for (const force of data.unknown_forces) {
 			if (force.force === 0 || isNaN(force.force)) {
+				force.force = 0;
+				force.update_force_span();
 				continue;
 			}
 			draw_unknown_force(force);
