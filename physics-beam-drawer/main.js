@@ -135,7 +135,7 @@ function get_data() {
 	data.show_forces = document.querySelector("#show-forces").checked;
 	data.show_reactions = document.querySelector("#show-reactions").checked;
 	
-	const fieldsets = document.querySelectorAll("form > section > fieldset");
+	const fieldsets = document.querySelectorAll(".force-section > fieldset");
 	add_loads_to_data(fieldsets);
 	
 	return data;
