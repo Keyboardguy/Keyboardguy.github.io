@@ -1,47 +1,74 @@
 "use strict";
 //coding is hard
 
-import { get_reaction } from "./calculations.js"
-import { draw_diagram } from "./draw.js"
+import { calculate_forces } from "./calculations.js";
+import { draw_diagram } from "./draw.js";
 
-class UnknownForce {
-	// The force and horizontal force, etc will all get assigned in the calculations.js file.
-	constructor(angle) {
+class Force {
+	constructor(angle, type_span) {
 		this.angle = Math.abs(angle) === 360 ? 0 : angle;
+		this.positive_angle = this.angle < 0 ? 360 + this.angle : this.angle;
+		this.type_span = type_span;
+	}
+
+	update_type_span() {
+		if (typeof this.force !== 'undefined') {
+			this.type_span.innerHTML = this.force < 0 ? "Strut" : "Tie";
+		} else {
+			this.type_span.innerHTML = "?"
+		}
+	}
+}
+class UnknownForce extends Force { 
+	// The force will get assigned in the calculations.js file.
+	constructor(angle, type_span, force_span) {
+		super(angle, type_span);
+		this.force_span = force_span;
+	}
+
+	set_trig_values(angle) {
+		// These are NOT the trig values of the actual angle, its the ones were the known force has been set vertically.
+		this.horizontal_trig =
+			angle <= 90
+			? Math.sin(deg_to_rad(angle))
+			: angle <= 180
+			? Math.cos(deg_to_rad(angle - 90))
+			: angle <= 270
+			? Math.sin(deg_to_rad(angle - 180)) 
+			: Math.cos(deg_to_rad(angle - 270));
+
+		this.vertical_trig =
+			angle <= 90
+			? Math.cos(deg_to_rad(angle))
+			: angle <= 180
+			? Math.sin(deg_to_rad(angle - 90))
+			: angle <= 270
+			? Math.cos(deg_to_rad(angle - 180))
+			: Math.sin(deg_to_rad(angle - 270));
+	}
+
+	update_force_span() {
+		if (typeof this.force !== 'undefined') {
+			this.force_span.innerHTML = this.force.toFixed(2);
+		} else {
+			this.force_span.innerHTML = "?"
+		}
 	}
 }
 
-class KnownForce {
+class KnownForce extends Force {
 	// the negative multiplying for the horiz/vertical force is different for the beam drawer,
 	// because a pulling force is entered instead of a pushing force.
 	// left force is negative, right force is positive.
 	// down force is negative, up force is positive.
-	constructor(force, angle) {
+	constructor(force, angle, type_span) {
+		super(angle, type_span);
 		this.force = force;
-		this.angle = Math.abs(angle) === 360 ? 0 : angle;
-		this.positive_angle = this.angle < 0 ? 360 + this.angle : this.angle;
-		
-		this.horizontal_force =
-			   (this.positive_angle <= 90 
-			   ? Math.sin(deg_to_rad(this.positive_angle))
-			   : this.positive_angle <= 180
-			   ? Math.cos(deg_to_rad(this.positive_angle - 90)) 
-			   : this.positive_angle <= 270
-			   ? Math.sin(deg_to_rad(this.positive_angle - 180)) * -1
-			   : Math.cos(deg_to_rad(this.positive_angle - 270)) * -1)
-			   * this.force;
-		
-		this.vertical_force = 
-		       (this.positive_angle <= 90 
-			   ? Math.cos(deg_to_rad(this.positive_angle))
-			   : this.positive_angle <= 180
-			   ? Math.sin(deg_to_rad(this.positive_angle - 90)) * -1
-			   : this.positive_angle <= 270
-			   ? Math.cos(deg_to_rad(this.positive_angle - 180)) * -1
-			   : Math.sin(deg_to_rad(this.positive_angle - 270)))
-			   * this.force;
 	}
 }
+
+// globals
+let force_unit = "k";
 
 function deg_to_rad(x) {
 	return x * (Math.PI / 180);
@@ -54,19 +81,24 @@ function get_data() {
 	}
 	
 	function add_forces_to_data() {
-		// This is VERY finicky. The inputs must come in a very specific order for this to work, so not very scalable. Might change later.
-		const input_force_properties = document.querySelectorAll(`.oriented input`);
+		// This is VERY finicky. The inputs must come in a very specific order for this to work.
+		const input_force_properties = document.querySelectorAll(".oriented input");
+		const calculated_force_spans = document.querySelectorAll(".calculated_force");
+		const force_type_spans = document.querySelectorAll(".strut_or_tie");
 		const properties = [];
 			
 		for (const property of input_force_properties.values()) {
 			properties.push(sanitize(property.value));
 		}
 
-		data.known_force = new KnownForce(properties[0], properties[1]);
-		data.unknown_forces = [new UnknownForce(properties[2]), new UnknownForce(properties[3])];
+		// I literally put in the values by hand. That's how finicky this is.
+		data.known_force = new KnownForce(properties[0], properties[1], force_type_spans[0]);
+		data.unknown_forces = [new UnknownForce(properties[2], force_type_spans[1], calculated_force_spans[0]),
+							   new UnknownForce(properties[3], force_type_spans[2], calculated_force_spans[1])];
 	}
 	
 	const data = {};
+	data.force_unit = force_unit
 	add_forces_to_data();
 	return data;
 }
@@ -106,7 +138,7 @@ function do_calculations(event=false) {
 	}
 	
 	const data = get_data();
-	get_reaction(data);
+	calculate_forces(data);
 	draw_diagram(data);
 }
 
@@ -126,83 +158,29 @@ function calculate_as_you_enter() {
 
 calculate_as_you_enter();
 
-
-//Everything beyond this point is form stuff.
-
-//why does this work?
-//nevermind i figured it out, this is pretty smart
-//if the validation returns false, then the form is allowed
-//to submit and return an error so i dont have to write it.
-// if it returns true, then it prevents default and draws the diagram.
-
-function make_force_adder() {
-	let counter = 0;
+function allow_switch_force_units() {
+	const unit_buttons = document.querySelectorAll("input[name='force_units']");
 	
-	function assign_basic_attributes(label, input, property, label_text) {
-		label.textContent = label_text;
-		label.setAttribute("for", counter);
-		input.setAttribute("id", counter);
-		input.setAttribute("name", property);
-		input.setAttribute("type", "number");
-		input.setAttribute("step", "any");
-		input.addEventListener("keyup", do_calculations);
-		counter += 1;
-	}
-	
-	function make_property_para(property, label_text) {
-		const para = document.createElement("p");
-		const label = document.createElement("label");
-		const input = document.createElement("input");
-		para.appendChild(label);
-		para.appendChild(input);
-		assign_basic_attributes(label, input, property, label_text);
-		return para;
-	}
-	
-	function dispatch(force_type, button, fieldset) {
-		const hr = document.createElement("hr");
-		const div = document.createElement("div");
-		fieldset.insertBefore(hr, button);
-
-		const delete_button = document.createElement("button");
-		delete_button.setAttribute("type", "button");
-		delete_button.textContent = "Delete force";
-		delete_button.addEventListener("click", event => { 
-			div.remove();
-			hr.remove();
-			do_calculations;
+	for (const button of unit_buttons.values()) {
+		button.addEventListener("click", event => {
+			const labels = document.querySelectorAll("fieldset:nth-child(n + 2) label");
+			force_unit = button.value;
+			for (const label of labels.values()) {
+				label.textContent = label.textContent.replaceAll(/[kMG]?N/g, `${force_unit}N`);
+			}
+			
+			do_calculations();
 		});
-		div.appendChild(delete_button);
-		
-		div.appendChild(make_property_para("force", `Force (kN): `));
-		const angle_para = document.createElement("p");
-		const angle_label = document.createElement("label");
-		const angle_input = document.createElement("input");
-		assign_basic_attributes(angle_label,
-								angle_input,
-								"angle",
-								"Angle measured from clockwise vertical (°): ");
-								
-		angle_input.setAttribute("min", "-360");
-		angle_input.setAttribute("max", "360");
-		angle_para.appendChild(angle_label);
-		angle_para.appendChild(angle_input);	
-		div.appendChild(angle_para);
-		
-		fieldset.insertBefore(div, button);
-		return;
 	}
-	return dispatch;
 }
 
-const force_adder = make_force_adder();
-
-const oriented_force_button = document.getElementById("add-oriented-force");
-
-oriented_force_button.addEventListener("click", event => {
-	const fieldset = document.querySelector(".oriented");
-	force_adder("oriented", event.currentTarget, fieldset);
+//switch to kN once page loads so it doesn't load as N checked with kN displayed.
+//the global variable force_unit is defined wayyy up.
+window.addEventListener("load", (event) => {
+  document.querySelector("#kN").checked = true;
 });
+
+allow_switch_force_units();
 
 function prevent_accidental_reset() {
 	const resetButton = document.querySelector("input[type='reset']");

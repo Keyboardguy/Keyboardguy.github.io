@@ -2,18 +2,27 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-	    <title>Easier forces on a point</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	    <title>Harder forces on a point</title>
 		<link rel="stylesheet" href="style.css">
 		<script src="./javascript/main.js" type="module"></script>
 	</head>
 	<body>
-		<h1>Forces on a point</h1>
+		<h1>Forces on a point (harder)</h1>
 		<canvas id="diagram" width="1200" height="600">
 			<p> There is supposed to be a diagram here, but it doesn't work on your device for some reason. </p>
 			<p> I don't take engineering, so you might have to ask me to fix it otherwide I wont notice. </p>
 		</canvas>
-		
+
+		<form>
+			<p class="diagram_settings">
+				<label for="N">Forces in N: </label>
+				<input type="radio" id="N" name="force_units" value="">
+				<label for="kN">Forces in kN: </label>
+				<input type="radio" id="kN" name="force_units" value="k" checked>
+			</p>
+		</form>
+
 		<form>
 			<div class="details">
 				<fieldset class="oriented known">
@@ -21,39 +30,41 @@
 					<div>
 						<p>
 							<label for="force">Force (kN):</label>
-							<input type="number" id="force" name="force" step="any" />
+							<input type="number" id="force" name="force" step="any">
 						</p>
 				
 						<p>
 							<label for="angle">Angle measured from clockwise vertical (°):</label>
-							<input type="number" id="angle" name="angle" min="-360" max="360" step="any" />
+							<input type="number" id="angle" name="angle" min="-360" max="360" step="any">
 						</p>
+
+						<p class="strut_or_tie"></p>
 					</div>
 				</fieldset>
 				<fieldset class="oriented unknown">
 					<legend> Unknown Force </legend>
 					<div>
-						<p>
-							<label for="force">Calculated Force (kN): <span class="calculated_force">?</span></label>
-						</p>
+						<p>Calculated Force (kN): <span class="calculated_force">?</span></p>
 				
 						<p>
-							<label for="angle">Angle measured from clockwise vertical (°):</label>
-							<input type="number" id="angle" name="angle" min="-360" max="360" step="any" />
+							<label for="angle_1">Angle measured from clockwise vertical (°):</label>
+							<input type="number" id="angle_1" name="angle" min="-360" max="360" step="any">
 						</p>
+
+						<p class="strut_or_tie"></p>
 					</div>
 				</fieldset>
 				<fieldset class="oriented unknown">
 					<legend> Unknown Force </legend>
 					<div>
-						<p>
-							<label for="force">Calculated Force (kN): <span class="calculated_force">?</span></label>
-						</p>
+						<p>Calculated Force (kN): <span class="calculated_force">?</span></p>
 				
 						<p>
-							<label for="angle">Angle measured from clockwise vertical (°):</label>
-							<input type="number" id="angle" name="angle" min="-360" max="360" step="any" />
+							<label for="angle_2">Angle measured from clockwise vertical (°):</label>
+							<input type="number" id="angle_2" name="angle" min="-360" max="360" step="any">
 						</p>
+
+						<p class="strut_or_tie"></p>
 					</div>
 				</fieldset>
 			</div>

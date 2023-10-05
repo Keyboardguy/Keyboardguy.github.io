@@ -1,8 +1,8 @@
 "use strict";
 //coding is hard
 
-import { get_reaction } from "./calculations.js"
-import { draw_diagram } from "./draw.js"
+import { get_reaction } from "./calculations.js";
+import { draw_diagram } from "./draw.js";
 
 class Force {
 	// the negative multiplying for the horiz/vertical force is different for the beam drawer,
@@ -35,6 +35,9 @@ class Force {
 			   * this.force;
 	}
 }
+
+// globals
+let force_unit = "k";
 
 function deg_to_rad(x) {
 	return x * (Math.PI / 180);
@@ -71,6 +74,7 @@ function get_data() {
 	}
 	
 	const data = {};
+	data.force_unit = force_unit;
 	add_forces_to_data();
 	
 	return data;
@@ -133,6 +137,31 @@ calculate_as_you_enter();
 
 
 //Everything beyond this point is form stuff.
+
+function allow_switch_force_units() {
+	const unit_buttons = document.querySelectorAll("input[name='force_units']");
+	
+	for (const button of unit_buttons.values()) {
+		button.addEventListener("click", event => {
+			const labels = document.querySelectorAll("fieldset:nth-child(n + 2) label");
+			force_unit = button.value;
+			for (const label of labels.values()) {
+				label.textContent = label.textContent.replaceAll(/[kMG]?N/g, `${force_unit}N`);
+			}
+			
+			do_calculations();
+			
+		});
+	}
+}
+
+//switch to kN once page loads so it doesn't load as N checked with kN displayed.
+//the global variable force_unit is defined wayyy up.
+window.addEventListener("load", (event) => {
+  document.querySelector("#kN").checked = true;
+});
+
+allow_switch_force_units();
 
 //why does this work?
 //nevermind i figured it out, this is pretty smart

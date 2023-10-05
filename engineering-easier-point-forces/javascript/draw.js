@@ -4,10 +4,6 @@ function deg_to_rad(x) {
 	return x * (Math.PI / 180);
 }
 
-function rad_to_deg(x) {
-	return x * (180 / Math.PI);
-} 
-
 export function draw_diagram(data) {
 	function draw_line(x1, y1, x2, y2) {
 		ctx.beginPath();
@@ -37,18 +33,6 @@ export function draw_diagram(data) {
 		ctx.fill();
     }
 	
-	function draw_angle_from_vertical(x, y, angle, arrow_length) {
-		ctx.save();
-		ctx.setLineDash([5, 5]);
-		draw_line(x, y, x, y - arrow_length);
-		ctx.restore();
-		ctx.beginPath();
-		ctx.arc(x, y, arrow_length / 2, 1.5 * Math.PI, deg_to_rad(270 + angle));
-		ctx.stroke();
-		ctx.fillText(`${angle.toFixed(2)}°`,
-					  x + 5, y - arrow_length / 2 - 5);
-	}
-	
 	function rotate_points_by_angle(x, y, angle, arrow_length) {
 		// assume the angle is measured clockwise from the vertical
 		// returns an array with new x at 0 index and y at 1 index.
@@ -61,9 +45,11 @@ export function draw_diagram(data) {
 
 	function make_force_angle_drawer() {
 		const current_quadrant_angles = [0,0,0,0]
+		const forces_to_draw = [];
 
 		function draw_force_angle(force, arrow_length) {
 			ctx.save()
+			ctx.strokeStyle = force.color;
 			const quadrant = Math.floor(force.positive_angle / 90);
 			const acute_angle = force.positive_angle % 90;	
 			const start_angle_radians = -0.5 * Math.PI + (quadrant * (Math.PI / 2));
@@ -87,10 +73,32 @@ export function draw_diagram(data) {
 			ctx.restore()
 			current_quadrant_angles[quadrant] = acute_angle;
 		}
-		return draw_force_angle;
+
+		function add_force(force, color) {
+			force.color = color;
+			forces_to_draw.push(force);
+		}
+
+		function draw_forces(arrow_length) {
+			// Must be called last. Once all the forces have been added.
+			forces_to_draw.sort((f1, f2) => f1.positive_angle - f2.positive_angle);
+			for (const force of forces_to_draw) {
+				draw_force_angle(force, arrow_length);
+			}
+		}
+		
+		function dispatch(message) {
+			return message === "add"
+				   ? add_force
+				   : message === "draw"
+				   ? draw_forces 
+				   : console.error("This should not happen. Ever. Please message me.");
+		}	
+
+		return dispatch;
 	}
 
-	const draw_force_angle = make_force_angle_drawer();
+	const force_angle_drawer = make_force_angle_drawer();
 
 	function draw_axis(size) {
 		ctx.save();
@@ -119,7 +127,10 @@ export function draw_diagram(data) {
 				   : draw_arrow(x1, y1, x2, y2)
 		}
 
-		function draw_force(force) {
+		function draw_force(force, color) {
+			ctx.save();
+			ctx.strokeStyle = color;
+			ctx.fillStyle = color;
 			const xy2 = rotate_points_by_angle(canvas_data.centre[0],
 											   canvas_data.centre[1],
 											   force.positive_angle,
@@ -131,26 +142,18 @@ export function draw_diagram(data) {
 										  	        arrow_length + 25);
 											   
 			draw_force_arrow(canvas_data.centre[0], canvas_data.centre[1], xy2[0], xy2[1], force.force);
-			draw_force_angle(force, arrow_length);
-			
-            /* TODO
-			draw_angle_from_vertical(force_x,
-									 canvas_data.beam_y,
-									 force.positive_angle,
-									 arrow_length); */
+			force_angle_drawer("add")(force, color)
 									 
-			ctx.fillText(`${Math.abs(force.force.toFixed(2))}kN`,
+			ctx.fillText(`${Math.abs(force.force.toFixed(2))}${data.force_unit}N`,
 					     text_xy2[0], text_xy2[1]);
+			
+			ctx.restore();
         }
 
         function draw_and_display_reaction() {
-            ctx.save();
-            ctx.strokeStyle = "#ff0000";
-            ctx.fillStyle = "#ff0000";
             // I'm drawing the force backwards. At all times.
             draw_force({positive_angle: data.reaction_angle,
-                        force: data.reaction_force});
-            ctx.restore();
+                        force: data.reaction_force}, "#ff0000");
             
             document.querySelector("#reaction_horizontal_force").innerHTML = data.reaction_horizontal_force.toFixed(2);
             document.querySelector("#reaction_vertical_force").innerHTML = data.reaction_vertical_force.toFixed(2);
@@ -164,10 +167,11 @@ export function draw_diagram(data) {
 			if (force.force === 0) {
 				continue;
 			}
-			draw_force(force);
+			draw_force(force, "#000000");
 		}
 
         draw_and_display_reaction()
+		force_angle_drawer("draw")(arrow_length);
 	}		
 				
 	const canvas = document.querySelector("#diagram");
