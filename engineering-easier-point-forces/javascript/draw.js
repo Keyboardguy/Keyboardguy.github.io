@@ -44,46 +44,81 @@ export function draw_diagram(data) {
 	}
 
 	function make_force_angle_drawer() {
-		const current_quadrant_angles = [0,0,0,0]
-		const forces_to_draw = [];
+		const forces_in_quadrant = [[],[],[],[]];
 
-		function draw_force_angle(force, arrow_length) {
+		function draw_force_angle(force, arrow_length, current_angles) {
+			if (force === 0 || force.positive_angle === 0) {
+				return;
+			}
 			ctx.save()
 			ctx.strokeStyle = force.color;
 			const quadrant = Math.floor(force.positive_angle / 90);
-			const acute_angle = force.positive_angle % 90;	
-			const start_angle_radians = -0.5 * Math.PI + (quadrant * (Math.PI / 2));
+
+			let acute_angle = force.positive_angle % 90;	
+			let start_angle_radians = 0;
+			let end_angle_radians = 0;
+			if (current_angles === 0) {
+				start_angle_radians = -0.5 * Math.PI + (quadrant * (Math.PI / 2));
+				end_angle_radians = start_angle_radians + deg_to_rad(acute_angle);
+			} else if (current_angles === 1) {
+				acute_angle = 90 - acute_angle;
+				// end_angle should be the horizontal/vertical AFTER the force's quadrant, so remove -0.5 * PI.
+				end_angle_radians = quadrant * (Math.PI / 2);
+				start_angle_radians = end_angle_radians - deg_to_rad(acute_angle);
+			} else {
+				return;
+			}
+
 			ctx.beginPath();
 			ctx.arc(canvas_data.centre[0], canvas_data.centre[1], arrow_length / 2,
-					start_angle_radians + deg_to_rad(current_quadrant_angles[quadrant]),
-				    start_angle_radians + deg_to_rad(acute_angle));
+					start_angle_radians,
+				    end_angle_radians);
 			ctx.stroke();
 
 			// so quadrant angle text doesn't overlap with the angle circle bit.
 			const adjusting_length = quadrant % 2 === 0
-								     ? acute_angle / 90 * 10
+								     ? current_angles === 0
+									   ? acute_angle / 90 * 10
+									   : (90 - acute_angle) / 90 * 5 + 10
 									 : 15;
+			const angle_to_rotate_by = current_angles === 0
+									   ? force.positive_angle - (acute_angle / 2)
+									   : force.positive_angle + (acute_angle / 2)
 
 			const text_position = rotate_points_by_angle(canvas_data.centre[0],
 														 canvas_data.centre[1],
-														 force.positive_angle - ((acute_angle - current_quadrant_angles[quadrant]) / 2),
+														 angle_to_rotate_by,
 														 arrow_length / 2 + 20 + adjusting_length);
-			ctx.fillText(`${(acute_angle - current_quadrant_angles[quadrant]).toFixed(2)}°`,
+			ctx.fillText(`${acute_angle.toFixed(2)}°`,
 						  text_position[0], text_position[1]);
 			ctx.restore()
-			current_quadrant_angles[quadrant] = acute_angle;
 		}
 
 		function add_force(force, color) {
 			force.color = color;
-			forces_to_draw.push(force);
+			const quadrant = Math.floor(force.positive_angle / 90);
+			forces_in_quadrant[quadrant].push(force);
 		}
 
 		function draw_forces(arrow_length) {
 			// Must be called last. Once all the forces have been added.
-			forces_to_draw.sort((f1, f2) => f1.positive_angle - f2.positive_angle);
-			for (const force of forces_to_draw) {
-				draw_force_angle(force, arrow_length);
+			for (const quadrant of forces_in_quadrant) {
+				if (quadrant.length === 1) {
+					draw_force_angle(quadrant[0], arrow_length, 0);
+				} else if (quadrant.length > 1) {
+					function get_value(a, b, predicate) {
+						return b === 0
+							   ? a
+						       : a === 0
+						       ? b
+					           : predicate(b.positive_angle, a.positive_angle)
+						       ? b
+						       : a
+					}
+
+					draw_force_angle(quadrant.reduce((a,b) => get_value(a, b, (x, y) => x < y), 0), arrow_length, 0);
+					draw_force_angle(quadrant.reduce((a,b) => get_value(a, b, (x, y) => x > y), 0), arrow_length, 1);
+				}
 			}
 		}
 		
@@ -94,7 +129,6 @@ export function draw_diagram(data) {
 				   ? draw_forces 
 				   : console.error("This should not happen. Ever. Please message me.");
 		}	
-
 		return dispatch;
 	}
 
