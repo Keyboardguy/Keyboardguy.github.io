@@ -1,0 +1,30 @@
+html {
+  box-sizing: border-box;
+  font-family: helvetica, sans-serif;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+canvas {
+  border: 1px solid black;
+}
+
+form {
+	display: block;
+}
+
+.details {
+  display: flex;
+  max-width: 1200px;
+}
+
+.resultant_details {
+  width: 400px;
+  height: auto;
+}
+
+canvas {
+  border: 1px solid black;
+}

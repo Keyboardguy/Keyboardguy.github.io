@@ -1,0 +1,10 @@
+Anything prefixed with 'calculation' in the calculation.js file classes means
+the balancing angle has been acounted for. That is, that the applied force
+has been rotated to be 0deg relative to the clockwise vertical, thereby
+turning essentailly the entire bridge around it.
+
+The force will always be the same no matter what angle - but the horizontal and vertical forces
+will be different. That's why calculation_force isn't a thing.
+
+Generally, you never want to use anything except the calculation properties for actually
+doing the calcuations.
