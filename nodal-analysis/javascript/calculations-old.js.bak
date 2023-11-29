@@ -4,8 +4,7 @@
 let balancing_angle = 0;
 
 class Connection {
-    constructor(id, from, to, angle) {
-        this.id = id;
+    constructor(from, to, angle) {
         this.force = null;
         this.from = from;
         this.to = to;
@@ -17,19 +16,14 @@ class Connection {
         return this.force !== null;
     }
 
-    calculate_force(force_to_balance, direction, node) {
-        this._set_calculation_variables(node);
+    calculate_force(force_to_balance, direction) {
+        this._set_calculation_variables();
         this.force = Math.abs(force_to_balance / this._needed_trig_fun(direction)(this._acute_calc_angle_in_radians));
 
         // this resolved force is already signed, and assumers that it is a tie. the _calculate_type_and_sign function
         // will swap the forces if it turns out to be a strut.
         this._resolve_self();
         this._calculate_type_and_sign(force_to_balance, direction);
-
-        // Cause the force will be inverted if the force is calculated at the to node. 
-        if (node === this.to) {
-            this._flip_force_signs();
-        } 
     }
 
     promise_to_set_force(force, type) {
@@ -40,7 +34,7 @@ class Connection {
         if (type !== "strut" && type !== "tie") {
             console.error("can only set struts or ties - promise to set force");
         }
-        this.force_type = type;
+        this._force_type = type;
         this.force = force;
     } 
 
@@ -51,12 +45,12 @@ class Connection {
 
         // this MUST be called after the balanced force is set, hence a promise is needed.
         this._resolve_self();
-        if (this.force_type === "strut") {
-            this._flip_force_signs();
+        if (this._force_type === "strut") {
+            this.flip_force_signs();
         }
     }
 
-    _flip_force_signs() {
+    flip_force_signs() {
         this._calculation_horizontal_force *= -1;
         this._calculation_vertical_force *= -1;
     }
@@ -77,19 +71,16 @@ class Connection {
         this._calculation_vertical_force = resolved_force[1]
     }
 
-    _set_calculation_variables(node) {
-        if (node === this.from) {
-            this._calculation_angle = make_positive_angle(this.angle - balancing_angle);
-        } else {
-            this._calculation_angle = make_positive_angle(180 + this.angle - balancing_angle);
-        }
-        this._horizontal_trig_fn = Math.floor(this._calculation_angle / 90) % 2 === 0 
+    _set_calculation_variables() {
+        // save a little bit of computing power by doing this. 
+        const calc_angle = this.calculation_angle;
+        this._horizontal_trig_fn = Math.floor(calc_angle / 90) % 2 === 0 
                                    ? Math.sin
                                    : Math.cos;   
-        this._vertical_trig_fn = Math.floor(this._calculation_angle / 90) % 2 === 0 
+        this._vertical_trig_fn = Math.floor(calc_angle / 90) % 2 === 0 
                                 ? Math.cos
                                 : Math.sin;  
-        this._acute_calc_angle_in_radians = deg_to_rad(this._calculation_angle % 90);
+        this._acute_calc_angle_in_radians = deg_to_rad(calc_angle % 90);
     }
 
     _calculate_type_and_sign(force_to_balance, known_direction) {
@@ -99,24 +90,24 @@ class Connection {
                               ? this._calculation_horizontal_force
                               : console.error("not vertical or horizontal - _calculate_type_and_sign");
         
-        if (force_to_balance === comparing_force) {
+        if (force_to_balance - comparing_force === 0) {
             // same sign - can't both be the same sign, so swap the force signs and make it a strut.
-            this._flip_force_signs();
-            this.force_type = "strut";
+            this.flip_force_signs();
+            this._force_type = "strut";
         } else {
-            this.force_type = "tie";
+            this._force_type = "tie";
         }
     }
 
     // calculation_angle_getter 
     get calculation_angle() {
-        // for the calculation itself, the node you are at matters, so this will have a defined value.
-        // for just generally, before you calculate it, its fine just to make it from a to b
-        // - as long as its a multiple of 180 + n (e.g. 90, 270), it doesn't matter.
-        return this._calculation_angle ?? make_positive_angle(this.angle - balancing_angle);
+        return make_positive_angle(this.angle - balancing_angle);
     }
     
     // protect properties.
+    get force_type() {
+        return this._force_type;
+    }
 
     get horizontal_trig_fn() {
         return this._horizontal_trig_fn;
@@ -246,7 +237,6 @@ class Point {
         this._unknown_horizontals = 0;
         this._vertical_unbalanced_force = 0;
         this._horizontal_unbalanced_force = 0;
-        const rounding_precision = 10000000000;
 
         this.connections.forEach(connection => {
             if (connection.is_known()) {
@@ -272,11 +262,8 @@ class Point {
             }
         });
 
-        // Sometimes the trig functions are off by a pico-unit, so I need to round it. 10dp seems like enough precision.
         this._vertical_unbalanced_force += this._applied_vertical_force;
-        this._vertical_unbalanced_force = Math.round(this._vertical_unbalanced_force * rounding_precision) / rounding_precision;
         this._horizontal_unbalanced_force += this._applied_horizontal_force;
-        this._horizontal_unbalanced_force = Math.round(this._horizontal_unbalanced_force * rounding_precision) / rounding_precision;
     }      
 
     _solve_unknown_connection(unwanted_angles, unbalanced_force, direction) {
@@ -284,7 +271,12 @@ class Point {
             if (unwanted_angles.includes(connection.calculation_angle)) {
                 continue;
             } else if (!connection.is_known()) {
-                connection.calculate_force(unbalanced_force, direction, this);
+                if (connection.from === this) {
+                    connection.calculate_force(unbalanced_force, direction);
+                } else {
+                    connection.calculate_force(unbalanced_force, direction);
+                    connection.flip_force_signs();
+                }
                 return;
             }
         }
@@ -292,15 +284,14 @@ class Point {
 }
 
 class AppliedForce {
-    constructor(id, force, angle, associated_point) {
-        this.id = id;
+    constructor(force, angle, assosciated_point) {
         this.force = force;
         this.angle = angle;
-        this.associated_point = associated_point;
+        this.assosciated_point = assosciated_point;
     }
 
     attempt_to_solve_forces(connection_list) {
-        this.associated_point.start_solving_connections(this, connection_list);
+        this.assosciated_point.start_solving_connections(this, connection_list);
     }
 }
 
@@ -334,6 +325,13 @@ function make_positive_angle(a) {
 
 function deg_to_rad(angle) {
     return angle * (Math.PI / 180);
+}
+
+function add_applied_force(id, force, angle, point) {
+    // the making of the applied force already attaches it to the point and the global.
+    const applied_force = new AppliedForce(id, force, angle, point);
+    all_applied_forces.push(applied_force);
+    point.add_force(applied_force);
 }
 
 function get_point(point_name, points_list) {
@@ -370,7 +368,7 @@ function get_valid_connections(connection_list, points_list) {
     }
 
     for (const connection of connection_list) {
-        if (typeof connection.angle !== "number" || typeof connection.from !== "string" || typeof connection.to !== "string") {
+        if (connection.angle === null || connection.from === null || connection.to === null) {
             continue;
         }
 
@@ -379,12 +377,12 @@ function get_valid_connections(connection_list, points_list) {
             continue;
         }
 
-        if (typeof connection.force === "number" && typeof connection.force_type === "string") {
+        if (connection.force) {
+            if (connection.force_type) {
                 connection.promise_to_set_force(connection.force, connection.force_type);
-        } else {
+            }
             // if the force is defined without a force_type, it'll cause problems as it will count as known. So just mark it null.
             connection.force = null;
-            connection.force_type = null;
         }
 
         const is_points_set = set_from_to(connection);
@@ -400,13 +398,11 @@ function get_valid_connections(connection_list, points_list) {
 function get_valid_applied_forces(applied_forces_list, points_list) {
     const ok_forces = [];
     for (const applied_force of applied_forces_list) {
-        if (typeof applied_force.force === "number"
-            && typeof applied_force.angle === "number" 
-            && typeof applied_force.associated_point === "string") {
-            const applied_force_point = get_point(applied_force.associated_point, points_list);;
+        if (applied_force.force !== null && applied_force.angle !== null && applied_force.assosciated_point !== null) {
+            const applied_force_point = get_point(applied_force.assosciated_point, points_list);;
 
             if (applied_force_point !== undefined) {
-                applied_force.associated_point = applied_force_point;
+                applied_force.assosciated_point = applied_force_point;
                 applied_force_point.add_force(applied_force);
                 ok_forces.push(applied_force);
             }
@@ -416,7 +412,7 @@ function get_valid_applied_forces(applied_forces_list, points_list) {
 }
 
 function solve_diagram(points_list, connection_list, applied_forces_list) {
-    // Solves the diagram as much as possible. Returns the points list, with the connections filled in.
+    // Solves the diagram as much as possible. Returns the connection list, with the details filled in.
     const valid_connections = get_valid_connections(connection_list, points_list);
     const valid_applied_forces = get_valid_applied_forces(applied_forces_list, points_list);
 
@@ -431,54 +427,29 @@ function solve_diagram(points_list, connection_list, applied_forces_list) {
         applied_force.attempt_to_solve_forces(valid_connections);
     }
 
-    return points_list;
+    return valid_connections;
 }
-
-function find_triangles(point) {
-  function find_all_connected_points(current_point) {
-    return current_point.connections.map(connection => {
-      return connection.from === current_point ? connection.to : connection.from;
-    })
-  }
-
-  function iter(depth, points_traversed, current_point) {
-    if (depth === 3) {
-      if (current_point === point) {
-        return [points_traversed];
-      } else {
-        return [];
-      }
-    } 
-
-    const connected_points = find_all_connected_points(current_point);
-    return connected_points.reduce((accumulated_triangles, new_point) => {
-      return [...iter(depth + 1, [...points_traversed, current_point], new_point), ...accumulated_triangles]
-    }, []);
-  }
-
-  return iter(0, [], point);
-}
-
 
 
 
 function test() {
-    const points_list = [new Point("A"), new Point("B"), new Point("C"), new Point("D")];
+    const points_list = [new Point("A"), new Point("B"), new Point("C")];
     
-    const connection_list = [new Connection(1, "a", "B", 50),
-						new Connection(1, "a", "c", 90),
-                       new Connection(1, "b", "c", 180),
-					   new Connection(1, "b", "d", 90),
-					   new Connection(1, "c", "d", 61)];
-	
+    const connection_list = [new Connection("a", "B", 150),
+                       new Connection("a", "a", 152), // should reject
+                       new Connection("b", "a", 210), // should reject
+                       new Connection("A", "C", 90),
+                       new Connection("d", null, 123), // should reject
+                       new Connection("C", "B", 200)];
 
-    const applied_force_list = [new AppliedForce(1, null, null, null),
-                          new AppliedForce(1, 1, 2, null),
-                          new AppliedForce(1, -31, 180, "a"),
-						  new AppliedForce(1, -24, 0, "b")];
-	
-	const results = solve_diagram(points_list, connection_list, applied_force_list);
-	
-	console.log(results);
-    console.log(find_triangles(results[2]));
-};
+    const applied_force_list = [new AppliedForce(null, null, null),
+                          new AppliedForce(1, 2, null),
+                          new AppliedForce(15, 0, "a")];
+
+
+    
+
+    console.log(solve_diagram(points_list, connection_list, applied_force_list));
+}
+
+//export { Point, Connection, AppliedForce, solve_diagram };

@@ -480,5 +480,5 @@ function test() {
 	const results = solve_diagram(points_list, connection_list, applied_force_list);
 	
 	console.log(results);
-    console.log(find_triangles(results[2]));
+    console.log(find_triangles(results[0]));
 };
