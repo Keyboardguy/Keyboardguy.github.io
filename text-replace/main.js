@@ -7,7 +7,7 @@ function replaceText() {
     const replaceWord = replaceInput.value;
     const withWord = withInput.value;
     previousValues.push(textArea.value);
-    const regex = new RegExp(String.raw(replaceWord), "g");
+    const regex = new RegExp(RegExp.escape(replaceWord), "g");
     const newText = textArea.value.replace(regex, withWord);
     textArea.value = newText;
 
