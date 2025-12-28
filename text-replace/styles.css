@@ -1,0 +1,27 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    text-align: center;
+}
+
+form > * {
+    display: bock;
+    margin: 0.8em;
+}
+
+#inputText {
+    display: block;
+    resize: vertical;
+    margin: auto;
+}
+
+#undoButton {
+
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  font-family: arial, sans-serif;
+  color: #069;
+  text-decoration: underline;
+  cursor: pointer;
+}
